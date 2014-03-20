@@ -1,0 +1,8 @@
+*.pyc
+*.pyo
+conf/nginx/vFense.conf
+var/rethinkdb
+var/scheduler
+var/redis
+var/packages
+var/tmp
