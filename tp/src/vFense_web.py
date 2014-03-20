@@ -147,7 +147,7 @@ class Application(tornado.web.Application):
             (r"/api/v1/reports/diskdetails?",AgentsDiskDetailsHandler),
             (r"/api/v1/reports/networkdetails?",AgentsNetworkDetailsHandler),
 
-	    ##### Filter-Reports Api
+    	    ##### Filter-Reports Api
             (r"/api/v1/reports/osquerydetails?", AgentsOsQueryDetailsHandler),
             (r"/api/v1/reports/hardwarequerydetails?",AgentsHardwareQueryDetailsHandler),
             (r"/api/v1/reports/cpuquerydetails?",AgentsCPUQueryDetailsHandler),
