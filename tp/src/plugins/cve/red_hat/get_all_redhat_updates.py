@@ -45,35 +45,66 @@ def write_content_to_file(file_path, file_name, data):
 
 def get_rh_data(dfile):
     datafile=dfile
-    fo=open(datafile, 'r+')
-    data=fo.read()
-    fo.close()
-    data1=data.split('=')
-    data2=[x for x in data1 if x]
-    vulnerability_id=(re.search(r'Advisory\sID:.*', data).group()).split(':')[1].strip()
-    product=(re.search(r"Product:\s.*", data).group()).split(':')[1].strip()
-    reference_url=(re.search(r"Advisory\sURL:\s.*", data).group()).split(':',1)[1].strip()
-    issue_date=(re.search(r"Issue\sdate:\s.*", data).group()).split(':')[1].strip()
-    cves=(re.search(r"CVE\sNames:\s+(\w.*)", data,).group()).split(':')[1].strip()
-    cve_ids=cves.split()
-    summary=re.search('1\.\s+Summary:\n\n(\w.*)\n\n.*2\.\s+Relevant', data, re.DOTALL).group(1)
-    descriptions=re.search('3\.\s+Description:\n\n(\w.*)\n\n.*4\.\s+Solution', data, re.DOTALL).group(1)
-    solutions=re.search('4\.\s+Solution:\n\n(\w.*)\n\n.*5\.\s+Bugs fixed', data, re.DOTALL).group(1)
-    #bug_fixed=re.search('5\.\s+Bugs fixed:\n\n(\w.*)\n\n.*6\.\s+Package List', data, re.DOTALL).group(1)
-    pkg_list=re.search('6\.\s+Package List:\n\n(\w.*)\n\n.*7\.\s+References', data, re.DOTALL).group(1)
-    references=re.search('7\.\s+References:\n\n(\w.*)\n\n.*8\.\s+Contact', data, re.DOTALL).group(1)
-    parse_data={
-        "Vulnerability_id":vulnerability_id,
-        "Product":product,
-        "issue_date": issue_date,
-        "reference_url":reference_url,
-        "cve_ids":cve_ids,
-        "Summary": summary.replace('\n',''),
-        "Descriptions": descriptions,
-        "Solutions": solutions.replace('\n',''),
-        "Packages" : pkg_list.replace('\n',''),
-        "References": references.replace('\n',', '),
-        }
+    if os.stat(datafile).st_size > 0:
+        fo=open(datafile, 'r+')
+        data=fo.read()
+        data1=data.split('=')
+        data2=[x for x in data1 if x]
+        print data2
+        aid = (re.search(r'Advisory\sID:.*', data))
+        if aid:
+            vulnerability_id = (aid.group()).split(':')[1].strip()
+        
+        prod=(re.search(r"Product:\s.*", data))
+
+        if prod:
+            product=prod.group().split(':')[1].strip()
+        
+	    aurl=re.search(r"Advisory\sURL:\s.*", data)
+        if aurl:
+	        reference_url=aurl.group().split(':',1)[1].strip()
+	
+        idate=(re.search(r"Issue\sdate:\s.*", data))
+        if idate:
+            issue_date=idate.group().split(':')[1].strip()
+	    
+        cve_name=(re.search(r"CVE\sNames:\s+(\w.*)", data,))
+        if cve_name:
+            cves=cve_name.group().split(':')[1].strip()
+            cve_ids=cves.split()
+
+	    s = re.search('1\.\s+Summary:\n\n(\w.*)\n\n.*2.', data, re.DOTALL)
+        if s:
+            summary = s.group(1)
+	
+        d=(re.search('Description:\n\n(\w.*)\n\n.*\s+Solution', data, re.DOTALL))
+        if d:
+            descriptions=d.group(1)
+	
+        sol = (re.search('Solution:\n\n(\w.*)\n\n.*\.\s+Bugs fixed', data, re.DOTALL))
+        if sol:
+            solutions=sol.group(1)
+        #bug_fixed=re.search('5\.\s+Bugs fixed:\n\n(\w.*)\n\n.*6\.\s+Package List', data, re.DOTALL).group(1)
+        pkg = (re.search('Package List:\n\n(\w.*)\n\n.*\.\s+References', data, re.DOTALL))
+        if pkg:
+            pkg_list=pkg.group(1)
+	
+        ref = (re.search('References:\n\n(\w.*)\n\n.*\.\s+Contact', data, re.DOTALL))        
+        if ref:
+            references=ref.group(1)
+        
+        parse_data={
+            "Vulnerability_id":vulnerability_id,
+            "Product":product,
+            "issue_date": issue_date,
+            "reference_url":reference_url,
+            "cve_ids":cve_ids,
+            "Summary": summary.replace('\n',''),
+            "Descriptions": descriptions,
+            "Solutions": solutions.replace('\n',''),
+            #"Packages" : pkg_list.replace('\n',''),
+            #"References": references.replace('\n',', '),
+            }
     return(parse_data)
     
 def get_threads():
@@ -100,6 +131,25 @@ def get_hlink(thread):
                    dlinks.append(hlink)
         return(dlinks) 
 
+def get_all_data():
+    cve_infos = []
+    threads=get_threads()
+    if threads:
+        for thread in threads:
+            date = thread.split('/')[-2]
+            hlinks=get_hlink(thread)
+            fpath=make_html_folder(dname=date)                
+            if hlinks:
+                for hlink in hlinks:
+                    print hlink
+                    fpath = fpath
+                    fname = (hlink.split('/')[-1])
+                    pre_data=parse_hdata(hlink)
+                    dfile = write_content_to_file(file_path=fpath, file_name=fname, data=pre_data)
+                    cve_data = get_rh_data(dfile)
+                    cve_infos.append(cve_data)
+    return(cve_infos)    
+"""                     
 #def get_html_links():
 #    dlink = []
 #    threads= get_threads()
@@ -116,3 +166,6 @@ def get_hlink(thread):
 #                    hdata=parse_hdata(hlink=hlink)
 #                    fpath = make_html_folder(dname = date)                    
 #    return(dlink)
+"""
+
+
