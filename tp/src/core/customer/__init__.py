@@ -1,6 +1,6 @@
-CustomersCollection = 'customers'
-CustomersPerUserCollection = 'customers_per_user'
-DEFAULT_CUSTOMER = 'default'
+class CustomerCollections():
+    Customers = 'customers'
+    CustomersPerUser = 'customers_per_user'
 
 class CustomerKeys():
     CustomerName = 'customer_name'
@@ -17,3 +17,4 @@ class CustomerPerUserKeys():
 
 class CustomerPerUserIndexes():
     CustomerName = 'customer_name'
+    UserName = 'user_name'
