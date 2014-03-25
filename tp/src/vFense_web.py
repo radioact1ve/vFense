@@ -151,12 +151,12 @@ class Application(tornado.web.Application):
             (r"/api/v1/reports/networkdetails?",AgentsNetworkDetailsHandler),
 
     	    ##### Filter-Reports Api
-            (r"/api/v1/reports/osquerydetails?", AgentsOsQueryDetailsHandler),
-            (r"/api/v1/reports/hardwarequerydetails?",AgentsHardwareQueryDetailsHandler),
-            (r"/api/v1/reports/cpuquerydetails?",AgentsCPUQueryDetailsHandler),
-            (r"/api/v1/reports/memoryquerydetails?",AgentsMemoryQueryDetailsHandler),
-            (r"/api/v1/reports/diskquerydetails?",AgentsDiskQueryDetailsHandler),
-            (r"/api/v1/reports/networkquerydetails?",AgentsNetworkQueryDetailsHandler),
+            (r"/api/v1/reports/os?", AgentsOsQueryDetailsHandler),
+            (r"/api/v1/reports/hardware?",AgentsHardwareQueryDetailsHandler),
+            (r"/api/v1/reports/cpu?",AgentsCPUQueryDetailsHandler),
+            (r"/api/v1/reports/memory?",AgentsMemoryQueryDetailsHandler),
+            (r"/api/v1/reports/disk?",AgentsDiskQueryDetailsHandler),
+            (r"/api/v1/reports/network?",AgentsNetworkQueryDetailsHandler),
             (r"/api/v1/reports/lastupdated?", AgentsLastUpdatedHandler),
             (r"/api/v1/reports/rebootneeded?", AgentsRequireRebootHandler),
             (r"/api/v1/reports/agentstatus?",AgentsConnectionStatusHandler),
