@@ -50,60 +50,71 @@ def get_rh_data(dfile):
         data=fo.read()
         data1=data.split('=')
         data2=[x for x in data1 if x]
-        print data2
+
+        summary = None
+        smry = re.search('1\.\s+Summary:\n\n(\w.*)\n\n.*2.', data, re.DOTALL)
+        if smry:
+            summary = smry.group(1)
+
+        descriptions = None
+        desc=(re.search('Description:\n\n(\w.*)\n\n.*\s+Solution', data, re.DOTALL))
+        if desc:
+            descriptions=desc.group(1)
+	
+        solutions = None
+        sol = (re.search('Solution:\n\n(\w.*)\n\n.*\.\s+Bugs fixed', data, re.DOTALL))
+        if sol:
+            solutions=sol.group(1)
+        #bug_fixed=re.search('5\.\s+Bugs fixed:\n\n(\w.*)\n\n.*6\.\s+Package List', data, re.DOTALL).group(1)
+        
+        pkg_list = None
+        pkg = (re.search('Package List:\n\n(\w.*)\n\n.*\.\s+References', data, re.DOTALL))
+        if pkg:
+            pkg_list=pkg.group(1)
+	
+        references = None
+        ref = (re.search('References:\n\n(\w.*)\n\n.*\.\s+Contact', data, re.DOTALL))        
+        if ref:
+            references=ref.group(1)
+
+        vulnerability_id = None
         aid = (re.search(r'Advisory\sID:.*', data))
         if aid:
             vulnerability_id = (aid.group()).split(':')[1].strip()
         
+        product = None
         prod=(re.search(r"Product:\s.*", data))
-
         if prod:
             product=prod.group().split(':')[1].strip()
         
-	    aurl=re.search(r"Advisory\sURL:\s.*", data)
+        reference_url = None
+        aurl=re.search(r"Advisory\sURL:\s.*", data)
         if aurl:
 	        reference_url=aurl.group().split(':',1)[1].strip()
-	
+	    
+        issue_date = None
         idate=(re.search(r"Issue\sdate:\s.*", data))
         if idate:
             issue_date=idate.group().split(':')[1].strip()
 	    
+        cve_ids = None
         cve_name=(re.search(r"CVE\sNames:\s+(\w.*)", data,))
         if cve_name:
             cves=cve_name.group().split(':')[1].strip()
             cve_ids=cves.split()
 
-	    s = re.search('1\.\s+Summary:\n\n(\w.*)\n\n.*2.', data, re.DOTALL)
-        if s:
-            summary = s.group(1)
-	
-        d=(re.search('Description:\n\n(\w.*)\n\n.*\s+Solution', data, re.DOTALL))
-        if d:
-            descriptions=d.group(1)
-	
-        sol = (re.search('Solution:\n\n(\w.*)\n\n.*\.\s+Bugs fixed', data, re.DOTALL))
-        if sol:
-            solutions=sol.group(1)
-        #bug_fixed=re.search('5\.\s+Bugs fixed:\n\n(\w.*)\n\n.*6\.\s+Package List', data, re.DOTALL).group(1)
-        pkg = (re.search('Package List:\n\n(\w.*)\n\n.*\.\s+References', data, re.DOTALL))
-        if pkg:
-            pkg_list=pkg.group(1)
-	
-        ref = (re.search('References:\n\n(\w.*)\n\n.*\.\s+Contact', data, re.DOTALL))        
-        if ref:
-            references=ref.group(1)
         
         parse_data={
             "Vulnerability_id":vulnerability_id,
             "Product":product,
             "issue_date": issue_date,
-            "reference_url":reference_url,
-            "cve_ids":cve_ids,
-            "Summary": summary.replace('\n',''),
+            "reference_url": reference_url,
+            "cve_ids": cve_ids,
+            "Summary": summary,
             "Descriptions": descriptions,
-            "Solutions": solutions.replace('\n',''),
-            #"Packages" : pkg_list.replace('\n',''),
-            #"References": references.replace('\n',', '),
+            "Solutions": solutions,
+            "Packages" : pkg_list,
+            "References": references,
             }
     return(parse_data)
     
