@@ -27,6 +27,7 @@ from vFense.server.api.scheduler_api import SchedulerYearlyRecurrentJobHandler
 from vFense.server.api.scheduler_api import SchedulerWeeklyRecurrentJobHandler
 from vFense.server.api.scheduler_api import SchedulerCustomRecurrentJobHandler
 from vFense.server.api.reports_api import *
+from vFense.server.api.filter_reports_api import *
 
 from vFense.db.client import *
 from vFense.scheduler.jobManager import start_scheduler
@@ -148,6 +149,17 @@ class Application(tornado.web.Application):
             (r"/api/v1/reports/memorydetails?",AgentsMemoryDetailsHandler),
             (r"/api/v1/reports/diskdetails?",AgentsDiskDetailsHandler),
             (r"/api/v1/reports/networkdetails?",AgentsNetworkDetailsHandler),
+
+    	    ##### Filter-Reports Api
+            (r"/api/v1/reports/osquerydetails?", AgentsOsQueryDetailsHandler),
+            (r"/api/v1/reports/hardwarequerydetails?",AgentsHardwareQueryDetailsHandler),
+            (r"/api/v1/reports/cpuquerydetails?",AgentsCPUQueryDetailsHandler),
+            (r"/api/v1/reports/memoryquerydetails?",AgentsMemoryQueryDetailsHandler),
+            (r"/api/v1/reports/diskquerydetails?",AgentsDiskQueryDetailsHandler),
+            (r"/api/v1/reports/networkquerydetails?",AgentsNetworkQueryDetailsHandler),
+            (r"/api/v1/reports/lastupdated?", AgentsLastUpdatedHandler),
+            (r"/api/v1/reports/rebootneeded?", AgentsRequireRebootHandler),
+            (r"/api/v1/reports/agentstatus?",AgentsConnectionStatusHandler),
 
 
             ##### Agent API Handlers

@@ -23,6 +23,8 @@ class AgentKey():
     Plugins = 'plugins'
     Core = 'core'
     Rebooted = 'rebooted'
+    SysArch = 'bit_type'
+    MonitStats='monit_stats'
 
 
 class AgentIndexes():
