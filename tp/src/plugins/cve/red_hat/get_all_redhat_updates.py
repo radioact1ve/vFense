@@ -169,6 +169,7 @@ def get_all_data():
                 cve_infos.append(pre_updates)
     return(cve_infos)   
 
+### this function is just to test the output. It will be replaced with db insertion soon.
 def write_cve_updates(updates=None):
     if updates:
         cpath = (HTML_DIR_REDHAT + 'cve_updates.txt')
