@@ -3,6 +3,7 @@ PLUGIN_DIR = os.path.abspath(os.path.dirname(__file__))
 XML_DIR = PLUGIN_DIR + '/data/xml'
 XLS_DIR = PLUGIN_DIR + '/data/xls'
 HTML_DIR_UBUNTU = PLUGIN_DIR + '/data/html/ubuntu/'
+HTML_DIR_REDHAT = PLUGIN_DIR + '/data/html/redhat/'
 NVD_MODIFIED_FILE = XML_DIR + '/nvdcve-modified.xml'
 METRIC = 'metric'
 VALUE = 'value'
