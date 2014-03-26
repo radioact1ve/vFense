@@ -167,7 +167,7 @@ def get_all_data():
                 pre_updates = get_hlink_updates(thread)
                 write_cve_updates(updates=str(pre_updates))
                 cve_infos.append(pre_updates)
-    return(cve_infos)   
+    #return(cve_infos)   
 
 ### this function is just to test the output. It will be replaced with db insertion soon.
 def write_cve_updates(updates=None):
