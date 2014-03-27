@@ -21,10 +21,8 @@ def parse_hdata(hlink):
     uri=hlink
     request=requests.get(uri)
     if request.ok:
-        hdata=request.content
-        pre_data=(re.search(r'<pre>.*</pre>?',hdata, re.DOTALL).group())
-
-    return(pre_data)
+        content=request.content
+    return(content)
 
 def make_html_folder(dname):
     PATH = HTML_DIR_REDHAT
@@ -34,13 +32,14 @@ def make_html_folder(dname):
         os.makedirs(fpath)
     return(fpath)
     
-def write_content_to_file(file_path, file_name, data):
+def write_content_to_file(file_path, file_name, content):
     dfile = (file_path + '/' + file_name)
-    msg_file = open(dfile, 'wb')
-    content = None
-    content = data
-    msg_file.write(content)
-    msg_file.close()
+    if not os.path.exists(dfile):
+        msg_file = open(dfile, 'wb')
+        content = None
+        content = data
+        msg_file.write(content)
+        msg_file.close()
     return(dfile)
 
 def get_rh_data(dfile):
@@ -128,39 +127,58 @@ def get_threads():
             threads.append(URL+href)
     return(threads)
 
-def get_hlink(thread):
+def get_hlink_updates(thread):
     dlinks = []
+    cve_updates = []
     req=requests.get(thread)
     if req.ok:
         url2 = thread
         date=url2.split('/')[-2]
-        req2=requests.get(url2)
-        soup2=BeautifulSoup(req2.text)
-        for mlink in soup2.find_all('a'):
+        tsoup=BeautifulSoup(req.text)
+        fpath=make_html_folder(dname=date)
+        for mlink in tsoup.find_all('a'):
              if "msg" in mlink.get('href'):
-                   hlink = (URL +date + '/' + mlink.get('href'))
-                   dlinks.append(hlink)
-        return(dlinks) 
+                 hlink = (URL +date + '/' + mlink.get('href'))
+                 fpath = fpath
+                 print hlink
+                 fname = (hlink.split('/')[-1])
+                 pre_data=parse_hdata(hlink)
+                 dfile = write_content_to_file(file_path=fpath, file_name=fname, content=pre_data)
+                 cve_data = get_rh_data(dfile)
+                 cve_updates.append(cve_data)
+                 #dlinks.append(hlink)
+        return(cve_updates) 
 
 def get_all_data():
+    path = HTML_DIR_REDHAT
     cve_infos = []
     threads=get_threads()
     if threads:
+        cur_thread=threads.pop(0)
+        cur_updates = get_hlink_updates(cur_thread)
+        write_data = write_cve_updates(updates=str(cur_updates))
+        cve_infos.append(cur_updates)
+
+        pre_threads=threads
         for thread in threads:
             date = thread.split('/')[-2]
-            hlinks=get_hlink(thread)
-            fpath=make_html_folder(dname=date)                
-            if hlinks:
-                for hlink in hlinks:
-                    print hlink
-                    fpath = fpath
-                    fname = (hlink.split('/')[-1])
-                    pre_data=parse_hdata(hlink)
-                    dfile = write_content_to_file(file_path=fpath, file_name=fname, data=pre_data)
-                    cve_data = get_rh_data(dfile)
-                    cve_infos.append(cve_data)
-    return(cve_infos)    
-"""                     
+            dpath = (path + date)
+            if not os.path.exists(dpath):
+                pre_updates = get_hlink_updates(thread)
+                write_cve_updates(updates=str(pre_updates))
+                cve_infos.append(pre_updates)
+    return(cve_infos)   
+
+def write_cve_updates(updates=None):
+    if updates:
+        cpath = (HTML_DIR_REDHAT + 'cve_updates.txt')
+        cve_file =open(cpath, 'wb+')
+        content = updates
+        cve_file.write(content)
+        cve_file.close()
+    return(cve_file)
+
+"""
 #def get_html_links():
 #    dlink = []
 #    threads= get_threads()
