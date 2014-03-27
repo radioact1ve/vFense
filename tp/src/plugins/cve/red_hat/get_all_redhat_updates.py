@@ -32,14 +32,14 @@ def make_html_folder(dname):
         os.makedirs(fpath)
     return(fpath)
     
-def write_content_to_file(file_path, file_name, content):
+def write_content_to_file(file_path, file_name, content=None):
     dfile = (file_path + '/' + file_name)
     if not os.path.exists(dfile):
         msg_file = open(dfile, 'wb')
-        content = None
-        content = data
-        msg_file.write(content)
-        msg_file.close()
+        content = content
+	if content:
+            msg_file.write(content)
+            msg_file.close()
     return(dfile)
 
 def get_rh_data(dfile):
@@ -115,7 +115,7 @@ def get_rh_data(dfile):
             "Packages" : pkg_list,
             "References": references,
             }
-    return(parse_data)
+    	return(parse_data)
     
 def get_threads():
     threads=[]
@@ -167,8 +167,9 @@ def get_all_data():
                 pre_updates = get_hlink_updates(thread)
                 write_cve_updates(updates=str(pre_updates))
                 cve_infos.append(pre_updates)
-    return(cve_infos)   
+    #return(cve_infos)   
 
+### this function is just to test the output. It will be replaced with db insertion soon.
 def write_cve_updates(updates=None):
     if updates:
         cpath = (HTML_DIR_REDHAT + 'cve_updates.txt')
