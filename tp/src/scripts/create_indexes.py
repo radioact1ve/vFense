@@ -671,6 +671,7 @@ def initialize_indexes_and_create_tables():
     if not GroupIndexes.GroupName in groups_list:
         r.table(GroupCollections.Groups).index_create(GroupIndexes.GroupName).run(conn)
 
+
 #################################### Groups Per User Indexes ###################################################
     if not GroupsPerUserIndexes.UserName in groups_per_user_list:
         r.table(GroupCollections.GroupsPerUser).index_create(GroupsPerUserIndexes.UserName).run(conn)
