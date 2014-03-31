@@ -133,6 +133,19 @@ def insert_into_bulletin_collection_for_ubuntu(bulletin_data, conn=None):
     except Exception as e:
         logger.exception(e)
 
+@db_create_close
+def insert_into_bulletin_collection_for_redhat(bulletin_data, conn=None):
+    try:
+        inserted = (
+            r
+            .table(RedhatSecurityBulletinCollection)
+            .insert(bulletin_data, upsert=True)
+            .run(conn)
+        )
+        logger.info('redhat bulletin database updated: %s', inserted)
+    except Exception as e:
+        logger.exception(e)
+
 
 
 @db_create_close
