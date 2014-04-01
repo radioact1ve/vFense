@@ -4,7 +4,7 @@ import re
 import sys
 import logging
 import logging.config
-from time import mktime
+from time import mktime, sleep
 from datetime import datetime
 from vFense.db.client import r
 
@@ -13,7 +13,8 @@ from vFense.plugins.cve import *
 from vFense.plugins.cve.cve_constants import *
 from vFense.plugins.cve.cve_db import *
 
-URL = "https://www.redhat.com/archives/rhsa-announce/"
+#URL = "https://www.redhat.com/archives/rhsa-announce/"
+URL = REDHAT_ARCHIVE
 
 logging.config.fileConfig('/opt/TopPatch/conf/logging.config')
 logger = logging.getLogger('cve')
@@ -105,6 +106,7 @@ def get_rh_data(dfile):
 
         
         parse_data={
+            "id": '',
             "Vulnerability_id":vulnerability_id,
             "Product":product,
             "issue_date": issue_date,
@@ -147,19 +149,16 @@ def get_hlink_updates(thread):
                  dfile = write_content_to_file(file_path=fpath, file_name=fname, content=pre_data)
                  cve_data = get_rh_data(dfile)
                  if cve_data:
-                    insert_into_bulletin_collection_for_redhat(cve_data)
-                 #cve_updates.append(cve_data)
-                 #dlinks.append(hlink)
-        #return(cve_updates) 
+                    #cve_updates.append(cve_data)
+                    insert=insert_into_bulletin_collection_for_redhat(bulletin_data=cve_data)
 
-def get_all_data():
+def update_all_redhat_data():
     path = HTML_DIR_REDHAT
     cve_infos = []
     threads=get_threads()
     if threads:
         cur_thread=threads.pop(0)
         cur_updates = get_hlink_updates(cur_thread)
-        #write_data = write_cve_updates(updates=str(cur_updates))
         cve_infos.append(cur_updates)
 
         pre_threads=threads
@@ -168,38 +167,4 @@ def get_all_data():
             dpath = (path + date)
             if not os.path.exists(dpath):
                 pre_updates = get_hlink_updates(thread)
-                #write_cve_updates(updates=str(pre_updates))
                 cve_infos.append(pre_updates)
-    #return(cve_infos)   
-
-"""
-### this function is just to test the output. It will be replaced with db insertion soon.
-def write_cve_updates(updates=None):
-    if updates:
-        cpath = (HTML_DIR_REDHAT + 'cve_updates.txt')
-        cve_file =open(cpath, 'wb+')
-        content = updates
-        cve_file.write(content)
-        cve_file.close()
-    return(cve_file)
-
-
-#def get_html_links():
-#    dlink = []
-#    threads= get_threads()
-#    for thread in threads:
-#        req=requests.get(thread)
-#        if req.status_code==200:
-#            url2=thread
-#            date=url2.split('/')[-2]
-#            req2=requests.get(url2)
-#            soup2=BeautifulSoup(req2.text)
-#            for mlink in soup2.find_all('a'):
-#                if "msg" in mlink.get('href'):
-#                    hlink=(URL+date+'/'+mlink.get('href'))
-#                    hdata=parse_hdata(hlink=hlink)
-#                    fpath = make_html_folder(dname = date)                    
-#    return(dlink)
-"""
-
-

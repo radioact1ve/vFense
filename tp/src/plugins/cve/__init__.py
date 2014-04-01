@@ -66,6 +66,22 @@ class UbuntuSecurityBulletinIndexes():
     NameAndVersion = 'name_and_version'
     CveIds = 'cve_ids'
 
+class RedhatSecurityBulletinKey():
+    Id = 'id'
+    DatePosted = 'date_posted'
+    BulletinId = 'bulletin_id'
+    Summary = 'bulletin_summary'
+    Details = 'bulletin_details'
+    Apps = 'apps'
+    OsString = 'os_string'
+    CveIds = 'cve_ids'
+    SupportUrl = 'support_url'
+
+class RedhatSecurityBulletinIndexes():
+    BulletinId = 'bulletin_id'
+    NameAndVersion = 'name_and_version'
+    CveIds = 'cve_ids'
+
 class SecurityBulletinKey():
     Id = 'id'
     DatePosted = 'date_posted'

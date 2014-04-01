@@ -31,6 +31,7 @@ from vFense.plugins import cve
 from vFense.plugins.cve.cve_parser import load_up_all_xml_into_db
 from vFense.plugins.cve.bulletin_parser import parse_bulletin_and_updatedb
 from vFense.plugins.cve.get_all_ubuntu_usns import begin_usn_home_page_processing
+from vFense.plugins.cve.get_all_redhat_updates import update_all_redhat_data
 
 logging.config.fileConfig('/opt/TopPatch/conf/logging.config')
 logger = logging.getLogger('rvapi')
@@ -152,6 +153,9 @@ def initialize_db():
         os.mkdir('/opt/TopPatch/tp/src/plugins/cve/data/xml', 0773)
     if not os.path.exists('/opt/TopPatch/tp/src/plugins/cve/data/html/ubuntu'):
         os.makedirs('/opt/TopPatch/tp/src/plugins/cve/data/html/ubuntu', 0773)
+    if not os.path.exists('/opt/TopPatch/tp/src/plugins/cve/data/html/redhat'):
+        os.makedirs('/opt/TopPatch/tp/src/plugins/cve/data/html/redhat', 0773)
+    
     if get_distro() in DEBIAN_DISTROS:
         subprocess.Popen(
             [
@@ -257,6 +261,7 @@ def initialize_db():
         if args.cve_data:
             print "Updating CVE's..."
             load_up_all_xml_into_db()
+            sleep(5)
             print "Done Updating CVE's..."
             print "Updating Microsoft Security Bulletin Ids..."
             parse_bulletin_and_updatedb()
@@ -264,7 +269,10 @@ def initialize_db():
             print "Updating Ubuntu Security Bulletin Ids...( This can take a couple of minutes )"
             begin_usn_home_page_processing(full_parse=True)
             print "Done Updating Ubuntu Security Bulletin Ids..."
-
+            sleep(5)
+            print "Updating Redhat Security Bulletin Ids...( This can take a couple of minutes )"
+            update_all_redhat_data()
+            print "Done Updating Redhat Security Bulletin Ids..."
 
         conn.close()
         completed = True

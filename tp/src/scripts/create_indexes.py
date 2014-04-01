@@ -29,6 +29,7 @@ def initialize_indexes_and_create_tables():
         (CveCollection, CveKey.CveId),
         (WindowsSecurityBulletinCollection, WindowsSecurityBulletinKey.Id),
         (UbuntuSecurityBulletinCollection, UbuntuSecurityBulletinKey.Id),
+        (RedHatSecurityBulletinCollection, RedhatSecurityBulletinKey.Id),
         ('downloaded_status', Id),
         (FilesCollection, FilesKey.FileName),
         (HardwarePerAgentCollection, Id),
@@ -68,6 +69,7 @@ def initialize_indexes_and_create_tables():
     cve_list = r.table(CveCollection).index_list().run(conn)
     windows_bulletin_list = r.table(WindowsSecurityBulletinCollection).index_list().run(conn)
     ubuntu_bulletin_list = r.table(UbuntuSecurityBulletinCollection).index_list().run(conn)
+    redhat_bulletin_list = r.table(RedHatSecurityBulletinCollection).index_list().run(conn)
     files_list = r.table(FilesCollection).index_list().run(conn)
     tags_list = r.table(TagsCollection).index_list().run(conn)
     agents_list = r.table(AgentsCollection).index_list().run(conn)
@@ -658,6 +660,16 @@ def initialize_indexes_and_create_tables():
         r.table(UbuntuSecurityBulletinCollection).index_create(
             UbuntuSecurityBulletinIndexes.NameAndVersion, lambda x: 
                 x[UbuntuSecurityBulletinKey.Apps].map(lambda y:
+                    [y['name'], y['version']]), multi=True).run(conn)
+
+#################################### Redhat Bulletin Indexes ###################################################
+    if not RedhatSecurityBulletinIndexes.BulletinId in redhat_bulletin_list:
+        r.table(RedHatSecurityBulletinCollection).index_create(RedhatSecurityBulletinIndexes.BulletinId).run(conn)
+
+    if not RedhatSecurityBulletinIndexes.NameAndVersion in redhat_bulletin_list:
+        r.table(RedHatSecurityBulletinCollection).index_create(
+            RedhatSecurityBulletinIndexes.NameAndVersion, lambda x: 
+                x[RedhatSecurityBulletinKey.Apps].map(lambda y:
                     [y['name'], y['version']]), multi=True).run(conn)
 
 #################################### Agent Queue Indexes ###################################################
