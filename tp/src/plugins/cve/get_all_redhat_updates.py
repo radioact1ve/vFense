@@ -107,16 +107,16 @@ def get_rh_data(dfile):
         
         parse_data={
             "id": '',
-            "Vulnerability_id":vulnerability_id,
-            "Product":product,
-            "issue_date": issue_date,
+            "vulnerability_id":vulnerability_id,
+            "product":product,
+            "date_issued": issue_date,
             "reference_url": reference_url,
             "cve_ids": cve_ids,
-            "Summary": summary,
-            "Descriptions": descriptions,
-            "Solutions": solutions,
-            "Packages" : pkg_list,
-            "References": references,
+            "summary": summary,
+            "descriptions": descriptions,
+            "solutions": solutions,
+            "apps" : pkg_list,
+            "references": references,
             }
     	return(parse_data)
     
