@@ -69,6 +69,37 @@ def get_ubu_vulnerability_data_by_vuln_id(vuln_id, conn=None):
     return(info)
 
 @db_create_close
+def get_redhat_vulnerability_data_by_vuln_id(vuln_id, conn=None):
+    info = {}
+    map_hash = (
+        {
+            RedhatSecurityBulletinKey.Id: r.row[RedhatSecurityBulletinKey.Id],
+            RedhatSecurityBulletinKey.BulletinId: r.row[RedhatSecurityBulletinKey.BulletinId],
+            #RedhatSecurityBulletinKey.DatePosted: r.row[RedhatSecurityBulletinKey.DatePosted].to_epoch_time(),
+            RedhatSecurityBulletinKey.Details: r.row[RedhatSecurityBulletinKey.Details],
+            RedhatSecurityBulletinKey.CveIds: r.row[RedhatSecurityBulletinKey.CveIds],
+            RedhatSecurityBulletinKey.Apps: r.row[RedhatSecurityBulletinKey.Apps],
+            #WindowsSecurityBulletinKey.Supersedes: [],
+        }
+    )
+    try:
+        info = list(
+            r
+            .table(RedHatSecurityBulletinCollection)
+            .get_all(vuln_id, index=RedhatSecurityBulletinIndexes.BulletinId)
+            .map(map_hash)
+            .run(conn)
+        )
+        if info:
+            info = info[0]
+
+    except Exception as e:
+        logger.exception(e)
+
+    return(info)
+
+
+@db_create_close
 def get_cve_data_by_cve_id(cve_id, conn=None):
     info = {}
     map_hash = (

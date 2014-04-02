@@ -8,7 +8,7 @@ from vFense.errorz.error_messages import GenericResults, PackageResults
 from vFense.plugins.cve import *
 from vFense.plugins.cve.cve_constants import *
 from vFense.plugins.cve.search._db import get_ubu_vulnerability_data_by_vuln_id, \
-    get_win_vulnerability_data_by_vuln_id
+    get_win_vulnerability_data_by_vuln_id, get_redhat_vulnerability_data_by_vuln_id
 
 logging.config.fileConfig('/opt/TopPatch/conf/logging.config')
 logger = logging.getLogger('cve')
@@ -38,6 +38,13 @@ class RetrieveByVulnerabilityId(object):
             self.Collection = UbuntuSecurityBulletinCollection
             self.Keys = UbuntuSecurityBulletinKey
             self.get_vuln_by_id = get_ubu_vulnerability_data_by_vuln_id
+
+        elif re.search('^RHSA-', self.vuln_id):
+            self.Collection = RedHatSecurityBulletinCollection
+            self.Keys = RedhatSecurityBulletinKey
+            self.get_vuln_by_id = get_redhat_vulnerability_data_by_vuln_id
+
+    
 
     def get_vuln(self):
         data = self.get_vuln_by_id(self.vuln_id)
