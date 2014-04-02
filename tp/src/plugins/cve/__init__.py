@@ -76,6 +76,9 @@ class RedhatSecurityBulletinKey():
     OsString = 'os_string'
     CveIds = 'cve_ids'
     SupportUrl = 'support_url'
+    Solutions = 'solutions'
+    References = 'references'
+    Product = 'product'
 
 class RedhatSecurityBulletinIndexes():
     BulletinId = 'bulletin_id'
