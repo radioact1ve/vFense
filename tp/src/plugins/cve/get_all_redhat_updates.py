@@ -12,6 +12,7 @@ from vFense.utils.common import month_to_num_month
 from vFense.plugins.cve import *
 from vFense.plugins.cve.cve_constants import *
 from vFense.plugins.cve.cve_db import *
+from vFense.plugins.cve.bulletin_parser import build_bulletin_id
 
 #URL = "https://www.redhat.com/archives/rhsa-announce/"
 URL = REDHAT_ARCHIVE
@@ -44,13 +45,40 @@ def write_content_to_file(file_path, file_name, content=None):
             msg_file.close()
     return(dfile)
 
+def get_rpm_pkgs(dfile):
+    rpm_pkgs = []
+    datafile=dfile
+    if os.stat(datafile).st_size > 0:
+        fo=open(datafile, 'r+')
+        data=fo.read()
+        pkg_list=re.search('6\.\s+Package List:\n\n(\w.*)\n\n.*7\.\s+References', data, re.DOTALL)
+        if pkg_list:
+            pkg_info = pkg_list.group(1)
+            pkgs = pkg_info.split()
+            for pkg in pkgs:
+                if '.rpm' in pkg and not 'ftp://' in pkg:
+                    rpm_pkgs.append(pkg) 
+    return(rpm_pkgs)
+
+def get_rh_cve_ids(dfile):
+    cve_ids = []
+    datafile=dfile
+    if os.stat(datafile).st_size > 0:
+        fo=open(datafile, 'r+')
+        data=fo.read()
+        cves=(re.search(r"CVE\sNames:\s+(\w.*)", data,re.DOTALL))
+        if cves:
+            cve_data = (cves.group()).split(':')[1].strip()
+            for cve in cve_data.split():
+                if 'CVE-' in cve:
+                    cve_ids.append(cve)
+    return(cve_ids)
+            
 def get_rh_data(dfile):
     datafile=dfile
     if os.stat(datafile).st_size > 0:
         fo=open(datafile, 'r+')
         data=fo.read()
-        data1=data.split('=')
-        data2=[x for x in data1 if x]
 
         summary = None
         smry = re.search('1\.\s+Summary:\n\n(\w.*)\n\n.*2.', data, re.DOTALL)
@@ -68,10 +96,7 @@ def get_rh_data(dfile):
             solutions=sol.group(1)
         #bug_fixed=re.search('5\.\s+Bugs fixed:\n\n(\w.*)\n\n.*6\.\s+Package List', data, re.DOTALL).group(1)
         
-        pkg_list = None
-        pkg = (re.search('Package List:\n\n(\w.*)\n\n.*\.\s+References', data, re.DOTALL))
-        if pkg:
-            pkg_list=pkg.group(1)
+        pkg_list = get_rpm_pkgs(dfile=dfile)
 	
         references = None
         ref = (re.search('References:\n\n(\w.*)\n\n.*\.\s+Contact', data, re.DOTALL))        
@@ -81,12 +106,12 @@ def get_rh_data(dfile):
         vulnerability_id = None
         aid = (re.search(r'Advisory\sID:.*', data))
         if aid:
-            vulnerability_id = (aid.group()).split(':')[1].strip()
+            vulnerability_id = (aid.group()).split(':', 1)[1].strip()
         
         product = None
         prod=(re.search(r"Product:\s.*", data))
         if prod:
-            product=prod.group().split(':')[1].strip()
+            product=prod.group().split(':',1)[1].strip()
         
         reference_url = None
         aurl=re.search(r"Advisory\sURL:\s.*", data)
@@ -96,18 +121,14 @@ def get_rh_data(dfile):
         issue_date = None
         idate=(re.search(r"Issue\sdate:\s.*", data))
         if idate:
-            issue_date=idate.group().split(':')[1].strip()
+            issue_date=idate.group().split(':',1)[1].strip()
+            date_posted = datetime.strptime(issue_date, "%Y-%m-%d").strftime('%s')
 	    
-        cve_ids = None
-        cve_name=(re.search(r"CVE\sNames:\s+(\w.*)", data,))
-        if cve_name:
-            cves=cve_name.group().split(':')[1].strip()
-            cve_ids=cves.split()
-
+        cve_ids = get_rh_cve_ids(dfile=dfile)
         
         parse_data={
             "id": '',
-            "date_posted": issue_date,
+            "date_posted": date_posted,
             "bulletin_id":vulnerability_id,
             "bullentin_summary": summary,
             "bulletin_details": descriptions,

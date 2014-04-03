@@ -75,10 +75,11 @@ def get_redhat_vulnerability_data_by_vuln_id(vuln_id, conn=None):
         {
             RedhatSecurityBulletinKey.Id: r.row[RedhatSecurityBulletinKey.Id],
             RedhatSecurityBulletinKey.BulletinId: r.row[RedhatSecurityBulletinKey.BulletinId],
-            #RedhatSecurityBulletinKey.DatePosted: r.row[RedhatSecurityBulletinKey.DatePosted].to_epoch_time(),
+            RedhatSecurityBulletinKey.DatePosted: r.row[RedhatSecurityBulletinKey.DatePosted],
             RedhatSecurityBulletinKey.Details: r.row[RedhatSecurityBulletinKey.Details],
             RedhatSecurityBulletinKey.CveIds: r.row[RedhatSecurityBulletinKey.CveIds],
             RedhatSecurityBulletinKey.Apps: r.row[RedhatSecurityBulletinKey.Apps],
+            RedhatSecurityBulletinKey.Product : r.row[RedhatSecurityBulletinKey.Product],
             #WindowsSecurityBulletinKey.Supersedes: [],
         }
     )

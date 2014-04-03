@@ -245,7 +245,7 @@ class Application(tornado.web.Application):
             #(r"/api/package/getDependecies?", GetDependenciesHandler),
 
             ##### Vulnerability API Handlers
-            (r'/api/v1/vulnerability/os/([A-Za-z0-9_-]+)?', VulnIdHandler),
+            (r'/api/v1/vulnerability/os/([A-Za-z0-9_-]+:?[0-9_-]+)?', VulnIdHandler),
             (r'/api/v1/vulnerability/cve/(CVE-[0-9]+-[0-9]+)?', CveIdHandler),
 
             ##### File system access whitelist
