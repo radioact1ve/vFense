@@ -126,8 +126,10 @@ def get_rh_data(dfile):
 	    
         cve_ids = get_rh_cve_ids(dfile=dfile)
         
+        ID = build_bulletin_id(data = vulnerability_id)
+        print ID
         parse_data={
-            "id": '',
+            "id": ID,
             "date_posted": date_posted,
             "bulletin_id":vulnerability_id,
             "bullentin_summary": summary,
@@ -170,8 +172,9 @@ def get_hlink_updates(thread):
                  dfile = write_content_to_file(file_path=fpath, file_name=fname, content=pre_data)
                  cve_data = get_rh_data(dfile)
                  if cve_data:
-                    #cve_updates.append(cve_data)
-                    insert=insert_into_bulletin_collection_for_redhat(bulletin_data=cve_data)
+                    cve_updates.append(cve_data)
+        insert=insert_into_bulletin_collection_for_redhat(bulletin_data=cve_updates)
+        return(insert)
 
 def update_all_redhat_data():
     path = HTML_DIR_REDHAT
