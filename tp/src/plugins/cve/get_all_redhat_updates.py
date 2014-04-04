@@ -178,17 +178,9 @@ def get_hlink_updates(thread):
 
 def update_all_redhat_data():
     path = HTML_DIR_REDHAT
-    cve_infos = []
     threads=get_threads()
     if threads:
-        cur_thread=threads.pop(0)
-        cur_updates = get_hlink_updates(cur_thread)
-        cve_infos.append(cur_updates)
-
-        pre_threads=threads
         for thread in threads:
             date = thread.split('/')[-2]
-            dpath = (path + date)
-            if not os.path.exists(dpath):
-                pre_updates = get_hlink_updates(thread)
-                cve_infos.append(pre_updates)
+            dpath = (path + date) 
+            pre_updates = get_hlink_updates(thread)
