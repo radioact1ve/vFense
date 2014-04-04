@@ -129,7 +129,7 @@ def get_rh_data(dfile):
         ID = build_bulletin_id(data = vulnerability_id)
         print ID
         parse_data={
-            "id": ID,
+            "id": '',
             "date_posted": date_posted,
             "bulletin_id":vulnerability_id,
             "bullentin_summary": summary,

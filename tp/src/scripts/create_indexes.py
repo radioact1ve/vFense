@@ -29,7 +29,7 @@ def initialize_indexes_and_create_tables():
         (CveCollection, CveKey.CveId),
         (WindowsSecurityBulletinCollection, WindowsSecurityBulletinKey.Id),
         (UbuntuSecurityBulletinCollection, UbuntuSecurityBulletinKey.Id),
-        (RedHatSecurityBulletinCollection, RedhatSecurityBulletinKey.Id),
+        (RedHatSecurityBulletinCollection, RedhatSecurityBulletinKey.BulletinId),
         ('downloaded_status', Id),
         (FilesCollection, FilesKey.FileName),
         (HardwarePerAgentCollection, Id),
@@ -663,14 +663,7 @@ def initialize_indexes_and_create_tables():
                     [y['name'], y['version']]), multi=True).run(conn)
 
 #################################### Redhat Bulletin Indexes ###################################################
-    if not RedhatSecurityBulletinIndexes.BulletinId in redhat_bulletin_list:
-        r.table(RedHatSecurityBulletinCollection).index_create(RedhatSecurityBulletinIndexes.BulletinId).run(conn)
 
-    if not RedhatSecurityBulletinIndexes.NameAndVersion in redhat_bulletin_list:
-        r.table(RedHatSecurityBulletinCollection).index_create(
-            RedhatSecurityBulletinIndexes.NameAndVersion, lambda x: 
-                x[RedhatSecurityBulletinKey.Apps].map(lambda y:
-                    [y['name'], y['version']]), multi=True).run(conn)
 
 #################################### Agent Queue Indexes ###################################################
     if not AgentQueueIndexes.AgentId in agent_queue_list:
