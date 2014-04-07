@@ -258,7 +258,7 @@ def get_rh_data(dfile):
         if aurl:
 	        reference_url=aurl.group().split(':',1)[1].strip()
 	    
-        issue_date = None
+        date_posted = None
         idate=(re.search(r"Issue\sdate:\s.*", data))
         if idate:
             issue_date=idate.group().split(':',1)[1].strip()
@@ -266,10 +266,7 @@ def get_rh_data(dfile):
 	    
         cve_ids = get_rh_cve_ids(dfile=dfile)
         
-        ID = build_bulletin_id(data = vulnerability_id)
-        print ID
         parse_data={
-            "id": '',
             "date_posted": date_posted,
             "bulletin_id":vulnerability_id,
             "bullentin_summary": summary,
