@@ -15,6 +15,7 @@ from vFense.plugins.mightymouse import *
 from vFense.plugins.vuln.cve import *
 from vFense.plugins.vuln.ubuntu import *
 from vFense.plugins.vuln.windows import *
+from vFense.plugins.vuln.redhat import *
 from vFense.core.queue import *
 
 Id = 'id'
@@ -31,6 +32,7 @@ def initialize_indexes_and_create_tables():
         (CVECollections.CVE, CveKey.CveId),
         (WindowsSecurityCollection.Bulletin, WindowsSecurityBulletinKey.Id),
         (UbuntuSecurityCollection.Bulletin, UbuntuSecurityBulletinKey.Id),
+        (RedHatSecurityCollection.Bulletin, RedhatSecurityBulletinKey.BulletinId)
         ('downloaded_status', Id),
         (FilesCollection, FilesKey.FileName),
         (HardwarePerAgentCollection, Id),
