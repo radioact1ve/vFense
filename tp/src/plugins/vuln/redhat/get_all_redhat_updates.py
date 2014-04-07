@@ -64,6 +64,7 @@ def get_dlinks(thread):
     dlinks = []
     req=requests.get(thread)
     if req.ok:
+        date = thread.split('/')[-2]
         tsoup=BeautifulSoup(req.text)
         for mlink in tsoup.find_all('a'):
              if "msg" in mlink.get('href'):
@@ -301,6 +302,7 @@ def insert_data_to_db(thread):
         
         for link in data_links:
             hlink = link
+            print hlink
             fname = (hlink.split('/')[-1])
             pre_data=parse_hdata(hlink)
             dfile = write_content_to_file(file_path=fpath, file_name=fname, content=pre_data)
