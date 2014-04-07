@@ -113,7 +113,7 @@ def fetch_vuln_data(vuln_id, conn=None):
 
 @time_it
 @db_create_close
-@return_status_tuple
+#@return_status_tuple
 def insert_bulletin_data(bulletin_data, conn=None):
     """Insert Ubuntu Bulletin data into the Redhat Security Bulletin Collection
         DO NOT CALL DIRECTLY
