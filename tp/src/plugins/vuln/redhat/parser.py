@@ -157,9 +157,19 @@ def get_rpm_pkgs(dfile):
     ARGS:
     dfile : data file to parse the rpm package for specific redhat vulnerability updates
 
+    >>> import os
+    >>> os.getcwd()
+    '/opt/TopPatch/tp/src/plugins/vuln/redhat'
+    >>> from vFense.plugins.vuln.redhat.parser import *
+    >>> dfile ='data/html/redhat/2010-March/msg00043.html'
+    >>> get_rpm_pkgs(dfile=dfile)
+
+    
     RETURNS:
 
     List of rpm packages parsed from data file corresponding to redhat updates/
+    ['seamonkey-nss-devel-1.0.9-0.52.el3.s390.rpm', 'seamonkey-nss-1.0.9-0.52.el3.s390x.rpm', 'seamonkey-nspr-1.0.9-0.52.el3.s390x.rpm',...] 
+    
     
     """
     rpm_pkgs = []
@@ -183,10 +193,18 @@ def get_rh_cve_ids(dfile):
     
     ARGS:
     dfile : data file to parse the cve-ids for specific redhat vulnerabilty updates.
+    
+    >>> import os
+    >>> os.getcwd()
+    '/opt/TopPatch/tp/src/plugins/vuln/redhat'
+    >>> from vFense.plugins.vuln.redhat.parser import *
+    >>> cve_ids=get_rh_cve_ids(dfile=dfile)
+
 
     RETURNS:
     List of CVE-IDs for specific redhat vulnerability update.
-    
+    ['CVE-2010-0174', 'CVE-2010-0175', 'CVE-2010-0176', 'CVE-2010-0177']
+   
     """
     cve_ids = []
     datafile=dfile
@@ -209,9 +227,21 @@ def get_rh_data(dfile):
 
     Args:
     dfile : data file to parse the cve-ids for specific redhat vulnerabilty updates.
+    
+    >>> import os
+    >>> os.getcwd()
+    '/opt/TopPatch/tp/src/plugins/vuln/redhat'
+    >>> from vFense.plugins.vuln.redhat.parser import *
+    >>> rh_data=get_rh_data(dfile=dfile)
 
     RETURNS:
     A dictionary data contents redhat update info.
+   
+    >>> rh_data['bulletin_id']
+    'RHSA-2010:0333-01'
+    >>> rh_data.keys()
+    ['product', 'bulletin_details', 'bullentin_summary', 'bulletin_id', 'solutions', 'references', 'support_url', 'cve_ids', 'apps', 'date_posted']
+    >>> 
     
     """
     
@@ -289,6 +319,10 @@ def insert_data_to_db(thread):
     ARGS:
     thread : redhat update thread link for specific month
 
+    >>> from vFense.plugins.vuln.redhat.parser import *
+    >>> threads = get_threads()
+    >>> thread =threads[0]
+    >>> insert = insert_data_to_db(thread=thread)
     
     """
     cve_updates = []
@@ -315,6 +349,9 @@ def update_all_redhat_data():
     """
     This will call the function to insert the data into db for all the threads 
     and will insert the data one by one.
+    
+    >>> from vFense.plugins.vuln.redhat.parser import *
+    >>> update_all_redhat_data()
     
     """
     threads=get_threads()
