@@ -28,6 +28,7 @@ from vFense.server.api.scheduler_api import SchedulerYearlyRecurrentJobHandler
 from vFense.server.api.scheduler_api import SchedulerWeeklyRecurrentJobHandler
 from vFense.server.api.scheduler_api import SchedulerCustomRecurrentJobHandler
 from vFense.server.api.reports_api import *
+from vFense.server.api.filter_reports_api import *
 
 from vFense.db.client import *
 from vFense.scheduler.jobManager import start_scheduler
@@ -156,6 +157,16 @@ class Application(tornado.web.Application):
             (r"/api/v1/reports/diskdetails?",AgentsDiskDetailsHandler),
             (r"/api/v1/reports/networkdetails?",AgentsNetworkDetailsHandler),
 
+    	    ##### Filter-Reports Api
+            (r"/api/v1/reports/os?", AgentsOsQueryDetailsHandler),
+            (r"/api/v1/reports/hardware?",AgentsHardwareQueryDetailsHandler),
+            (r"/api/v1/reports/cpu?",AgentsCPUQueryDetailsHandler),
+            (r"/api/v1/reports/memory?",AgentsMemoryQueryDetailsHandler),
+            (r"/api/v1/reports/disk?",AgentsDiskQueryDetailsHandler),
+            (r"/api/v1/reports/network?",AgentsNetworkQueryDetailsHandler),
+            (r"/api/v1/reports/lastupdated?", AgentsLastUpdatedHandler),
+            (r"/api/v1/reports/rebootneeded?", AgentsRequireRebootHandler),
+            (r"/api/v1/reports/agentstatus?",AgentsConnectionStatusHandler),
 
             ##### Agent API Handlers
             (r"/api/v1/agent/([a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[a-f0-9]{4}-[a-f0-9]{12})?", AgentHandler),
@@ -237,7 +248,7 @@ class Application(tornado.web.Application):
             #(r"/api/package/getDependecies?", GetDependenciesHandler),
 
             ##### Vulnerability API Handlers
-            (r'/api/v1/vulnerability/os/([A-Za-z0-9_-]+)?', VulnIdHandler),
+            (r'/api/v1/vulnerability/os/([A-Za-z0-9_-]+:?[0-9_-]+)?', VulnIdHandler),
             (r'/api/v1/vulnerability/cve/(CVE-[0-9]+-[0-9]+)?', CveIdHandler),
 
             ##### File system access whitelist
