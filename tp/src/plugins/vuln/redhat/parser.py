@@ -182,7 +182,7 @@ def get_rpm_pkgs(dfile):
         fo.close()
         pkg_list = data
         if pkg_list:
-            pkg_info = pkg_list.group(1)
+            pkg_info = pkg_list
             pkgs = pkg_info.split()
             for pkg in pkgs:
                 if '.rpm' in pkg and not 'ftp://' in pkg:

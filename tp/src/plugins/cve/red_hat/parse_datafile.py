@@ -23,21 +23,22 @@ pre_data = re.search(r'<pre>.*</pre>', data, re.DOTALL).group()
 #date_posted = datetime.strptime(issue_date, "%Y-%m-%d").strftime('%s')
 #print date_posted
 
-cves=(re.search(r"CVE\sNames:\s+(\w.*)", data,re.DOTALL).group()).split(':')[1].strip()
-for cve in cves.split():
-    if 'CVE-' in cve:
-        print cve
+#cves=(re.search(r"CVE\sNames:\s+(\w.*)", data,re.DOTALL).group()).split(':')[1].strip()
+#for cve in cves.split():
+#    if 'CVE-' in cve:
+#        print cve
 #summary=re.search('1\.\s+Summary:\n\n(\w.*)\n\n.*2\.\s+Relevant', data, re.DOTALL).group(1)
 #descriptions=re.search('3\.\s+Description:\n\n(\w.*)\n\n.*4\.\s+Solution', data, re.DOTALL).group(1)
 #solutions=re.search('4\.\s+Solution:\n\n(\w.*)\n\n.*5\.\s+Bugs fixed', data, re.DOTALL).group(1)
 #bug_fixed=re.search('5\.\s+Bugs fixed:\n\n(\w.*)\n\n.*6\.\s+Package List', data, re.DOTALL).group(1)
-pkg_list=re.search('6\.\s+Package List:\n\n(\w.*)\n\n.*7\.\s+References', data, re.DOTALL).group(1)
-pkgs = pkg_list.split()
+#pkg_list=re.search('6\.\s+Package List:\n\n(\w.*)\n\n.*7\.\s+References', data, re.DOTALL).group(1)
+pkgs = data.split()
 rpm_pkgs = []
 for pkg in pkgs:
     if '.rpm' in pkg and not 'ftp://' in pkg:
         rpm_pkgs.append(pkg) 
 
+print rpm_pkgs
 """
 references=re.search('7\.\s+References:\n\n(\w.*)\n\n.*8\.\s+Contact', data, re.DOTALL).group(1)
 parse_data={
