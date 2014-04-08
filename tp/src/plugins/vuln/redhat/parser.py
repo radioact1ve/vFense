@@ -198,7 +198,7 @@ def get_rpm_pkgs(dfile):
         fo=open(datafile, 'r+')
         data=fo.read()
         fo.close()
-        if data::
+        if data:
             pkg_info = data
             pkgs = pkg_info.split()
             for pkg in pkgs:
