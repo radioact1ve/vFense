@@ -48,17 +48,18 @@ def get_dlinks(thread):
     """
     Parse the Redhat update thread link and return the list of data link or message link.
     Args:
-    thread (url) : This should be valid Redhat thread link.
-    e.g:
-    >>> thread
-    'https://www.redhat.com/archives/rhsa-announce/2014-April/thread.html'
-    
-    
+        thread (url) : This should be valid Redhat thread link.
+        e.g:
+        >>> thread
+        'https://www.redhat.com/archives/rhsa-announce/2014-April/thread.html'
+        
     >>> from vFense.plugins.vuln.redhat.get_all_redhat_updates import *
     >>> dlinks=get_dlinks(thread)
-    >>> dlinks[0]
-    'https://www.redhat.com/archives/rhsa-announce/2014-April/msg00016.html'
-    >>> 
+    
+    RETURNS:
+        >>> dlinks[0]
+        'https://www.redhat.com/archives/rhsa-announce/2014-April/msg00016.html'
+        >>> 
     """
     
     dlinks = []
@@ -78,10 +79,10 @@ def parse_hdata(hlink):
     """
     Parse the content of Individual RedHat Updates or Message link and return the html contents
     Args:
-    hlink (url) : Redhat Update or Message link
-    e.g:
-    >>> hlink
-    'https://www.redhat.com/archives/rhsa-announce/2014-April/msg00016.html'
+        hlink (url) : Redhat Update or Message link
+        e.g:
+        >>> hlink
+        'https://www.redhat.com/archives/rhsa-announce/2014-April/msg00016.html'
     
     >>> from vFense.plugins.vuln.redhat.get_all_redhat_updates import *
     >>> content = parse_hdata(hlink)
@@ -177,7 +178,9 @@ def get_rpm_pkgs(dfile):
     if os.stat(datafile).st_size > 0:
         fo=open(datafile, 'r+')
         data=fo.read()
-        pkg_list=re.search('6\.\s+Package List:\n\n(\w.*)\n\n.*7\.\s+References', data, re.DOTALL)
+        #pkg_list=re.search('6\.\s+Package List:\n\n(\w.*)\n\n.*7\.\s+References', data, re.DOTALL)
+        fo.close()
+        pkg_list = data
         if pkg_list:
             pkg_info = pkg_list.group(1)
             pkgs = pkg_info.split()
