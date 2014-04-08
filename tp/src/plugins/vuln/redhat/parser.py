@@ -203,8 +203,12 @@ def get_rpm_pkgs(dfile):
             pkgs = pkg_info.split()
             for pkg in pkgs:
                 if '.rpm' in pkg and not 'ftp://' in pkg:
-                    rpm_pkgs.append(pkg) 
+                    rpm_pkgs.append(pkg)
+    
     packages = list(set(rpm_pkgs))
+    if not packages:
+        print datafile
+    
     return(packages)
 
 def get_rh_cve_ids(dfile):
