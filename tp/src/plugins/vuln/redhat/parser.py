@@ -26,11 +26,14 @@ def get_threads():
     Parse the Redhat Officlial Annouces (URL: "https://www.redhat.com/archives/rhsa-announce/") and 
     return the list of threads
     
-    >>> from vFense.plugins.vuln.redhat.get_all_redhat_updates import *
-    >>> threads = get_threads()
-    >>> threads[0]
-    'https://www.redhat.com/archives/rhsa-announce/2014-April/thread.html'
-    >>> 
+    BASIC USAGE:
+        >>> from vFense.plugins.vuln.redhat.get_all_redhat_updates import *
+        >>> threads = get_threads()
+
+    RETURNS:
+        >>> threads[0]
+        'https://www.redhat.com/archives/rhsa-announce/2014-April/thread.html'
+        >>> 
     
     """
     
@@ -52,7 +55,8 @@ def get_dlinks(thread):
         e.g:
         >>> thread
         'https://www.redhat.com/archives/rhsa-announce/2014-April/thread.html'
-        
+    
+    BASIC USAGE:
     >>> from vFense.plugins.vuln.redhat.get_all_redhat_updates import *
     >>> dlinks=get_dlinks(thread)
     
@@ -84,8 +88,12 @@ def parse_hdata(hlink):
         >>> hlink
         'https://www.redhat.com/archives/rhsa-announce/2014-April/msg00016.html'
     
-    >>> from vFense.plugins.vuln.redhat.get_all_redhat_updates import *
-    >>> content = parse_hdata(hlink)
+    Basic Usage :
+        >>> from vFense.plugins.vuln.redhat.get_all_redhat_updates import *
+        >>> content = parse_hdata(hlink)
+
+    Returns:
+        html webpage content
 
     """
     uri=hlink
@@ -98,15 +106,21 @@ def make_html_folder(dname):
     """
     Verify or Create (if not exist) folder to store the redhat updates (html files) and 
     return the PATH name.
-    Args:
-    dname = directory or folder name ('folder-name')
     
-    >>> from vFense.plugins.vuln.redhat._constants import *
-    >>> from vFense.plugins.vuln.redhat.get_all_redhat_updates import *
-    >>> FPATH = make_html_folder(dname='redhat')
-    >>> FPATH
-    '/usr/local/lib/python2.7/dist-packages/vFense/plugins/vuln/redhat/data/html/redhat'
-    >>>  
+    Args:
+        dname = directory or folder name ('folder-name')
+    
+    Basic Usage:
+    
+        >>> from vFense.plugins.vuln.redhat._constants import *
+        >>> from vFense.plugins.vuln.redhat.get_all_redhat_updates import *
+        >>> FPATH = make_html_folder(dname='redhat')
+    
+    Returns:
+    
+        >>> FPATH
+        '/usr/local/lib/python2.7/dist-packages/vFense/plugins/vuln/redhat/data/html/redhat'
+        >>>  
     
     """
     
@@ -121,26 +135,30 @@ def write_content_to_file(file_path, file_name, content=None):
     """
     This will write the content of redhat updates to the specified location locally on server
     and returns the data file. 
-    ARGS:
-    file_path : Specified path to locate the file to write
-    file_name : Name of the file to write the content
-    content : Content to write the file 
     
-    >>> from vFense.plugins.vuln.redhat._constants import *
-    >>> from vFense.plugins.vuln.redhat.get_all_redhat_updates import *
-    >>> PATH = make_html_folder(dname='redhat')
-    >>> PATH
-    '/usr/local/lib/python2.7/dist-packages/vFense/plugins/vuln/redhat/data/html/redhat'
-    >>> hlink
-    'https://www.redhat.com/archives/rhsa-announce/2014-April/msg00016.html'
-    >>> content = parse_hdata(hlink)
-    >>> file_name = hlink.split('/')[-1]
-    >>> file_name
-    'msg00016.html'
-    >>> data_file = write_content_to_file(file_path=PATH, file_name=file_name, content = content)
-    >>> data_file
-    '/usr/local/lib/python2.7/dist-packages/vFense/plugins/vuln/redhat/data/html/redhat/msg00016.html'
-    >>> 
+    ARGS:
+        file_path : Specified path to locate the file to write
+        file_name : Name of the file to write the content
+        content : Content to write the file 
+    
+    Basic Usage:
+        >>> from vFense.plugins.vuln.redhat._constants import *
+        >>> from vFense.plugins.vuln.redhat.get_all_redhat_updates import *
+        >>> PATH = make_html_folder(dname='redhat')
+        >>> PATH
+        '/usr/local/lib/python2.7/dist-packages/vFense/plugins/vuln/redhat/data/html/redhat'
+        >>> hlink
+        'https://www.redhat.com/archives/rhsa-announce/2014-April/msg00016.html'
+        >>> content = parse_hdata(hlink)
+        >>> file_name = hlink.split('/')[-1]
+        >>> file_name
+        'msg00016.html'
+        >>> data_file = write_content_to_file(file_path=PATH, file_name=file_name, content = content)
+        
+     Returns:   
+        >>> data_file
+        '/usr/local/lib/python2.7/dist-packages/vFense/plugins/vuln/redhat/data/html/redhat/msg00016.html'
+        >>> 
     
     """
     dfile = (file_path + '/' + file_name)
@@ -156,20 +174,21 @@ def get_rpm_pkgs(dfile):
     """
     Parse the list of rpm packages from the data-file and return as list.
     ARGS:
-    dfile : data file to parse the rpm package for specific redhat vulnerability updates
-
-    >>> import os
-    >>> os.getcwd()
-    '/opt/TopPatch/tp/src/plugins/vuln/redhat'
-    >>> from vFense.plugins.vuln.redhat.parser import *
-    >>> dfile ='data/html/redhat/2010-March/msg00043.html'
-    >>> get_rpm_pkgs(dfile=dfile)
+        dfile : data file to parse the rpm package for specific redhat vulnerability updates
+    
+    Basic Usage:
+        >>> import os
+        >>> os.getcwd()
+        '/opt/TopPatch/tp/src/plugins/vuln/redhat'
+        >>> from vFense.plugins.vuln.redhat.parser import *
+        >>> dfile ='data/html/redhat/2010-March/msg00043.html'
+        >>> get_rpm_pkgs(dfile=dfile)
 
     
     RETURNS:
 
-    List of rpm packages parsed from data file corresponding to redhat updates/
-    ['seamonkey-nss-devel-1.0.9-0.52.el3.s390.rpm', 'seamonkey-nss-1.0.9-0.52.el3.s390x.rpm', 'seamonkey-nspr-1.0.9-0.52.el3.s390x.rpm',...] 
+        List of rpm packages parsed from data file corresponding to redhat updates/
+        ['seamonkey-nss-devel-1.0.9-0.52.el3.s390.rpm', 'seamonkey-nss-1.0.9-0.52.el3.s390x.rpm', 'seamonkey-nspr-1.0.9-0.52.el3.s390x.rpm',...] 
     
     
     """
@@ -178,11 +197,9 @@ def get_rpm_pkgs(dfile):
     if os.stat(datafile).st_size > 0:
         fo=open(datafile, 'r+')
         data=fo.read()
-        #pkg_list=re.search('6\.\s+Package List:\n\n(\w.*)\n\n.*7\.\s+References', data, re.DOTALL)
         fo.close()
-        pkg_list = data
-        if pkg_list:
-            pkg_info = pkg_list
+        if data::
+            pkg_info = data
             pkgs = pkg_info.split()
             for pkg in pkgs:
                 if '.rpm' in pkg and not 'ftp://' in pkg:
@@ -195,18 +212,20 @@ def get_rh_cve_ids(dfile):
     Parse cve_ids from the data file and return the list of cve_ids.
     
     ARGS:
-    dfile : data file to parse the cve-ids for specific redhat vulnerabilty updates.
+        dfile : data file to parse the cve-ids for specific redhat vulnerabilty updates.
     
-    >>> import os
-    >>> os.getcwd()
-    '/opt/TopPatch/tp/src/plugins/vuln/redhat'
-    >>> from vFense.plugins.vuln.redhat.parser import *
-    >>> cve_ids=get_rh_cve_ids(dfile=dfile)
+    Basic Usage:
+    
+        >>> import os
+        >>> os.getcwd()
+        '/opt/TopPatch/tp/src/plugins/vuln/redhat'
+        >>> from vFense.plugins.vuln.redhat.parser import *
+        >>> cve_ids=get_rh_cve_ids(dfile=dfile)
 
 
     RETURNS:
-    List of CVE-IDs for specific redhat vulnerability update.
-    ['CVE-2010-0174', 'CVE-2010-0175', 'CVE-2010-0176', 'CVE-2010-0177']
+        List of CVE-IDs for specific redhat vulnerability update.
+        ['CVE-2010-0174', 'CVE-2010-0175', 'CVE-2010-0176', 'CVE-2010-0177']
    
     """
     cve_ids = []
@@ -229,22 +248,23 @@ def get_rh_data(dfile):
     dictionary data with all the redhay update info.
 
     Args:
-    dfile : data file to parse the cve-ids for specific redhat vulnerabilty updates.
-    
-    >>> import os
-    >>> os.getcwd()
-    '/opt/TopPatch/tp/src/plugins/vuln/redhat'
-    >>> from vFense.plugins.vuln.redhat.parser import *
-    >>> rh_data=get_rh_data(dfile=dfile)
+        dfile : data file to parse the cve-ids for specific redhat vulnerabilty updates.
+   
+    Basic Usage:
+        >>> import os
+        >>> os.getcwd()
+        '/opt/TopPatch/tp/src/plugins/vuln/redhat'
+        >>> from vFense.plugins.vuln.redhat.parser import *
+        >>> rh_data=get_rh_data(dfile=dfile)
 
     RETURNS:
-    A dictionary data contents redhat update info.
+        A dictionary data contents redhat update info.
    
-    >>> rh_data['bulletin_id']
-    'RHSA-2010:0333-01'
-    >>> rh_data.keys()
-    ['product', 'bulletin_details', 'bullentin_summary', 'bulletin_id', 'solutions', 'references', 'support_url', 'cve_ids', 'apps', 'date_posted']
-    >>> 
+        >>> rh_data['bulletin_id']
+        'RHSA-2010:0333-01'
+        >>> rh_data.keys()
+        ['product', 'bulletin_details', 'bullentin_summary', 'bulletin_id', 'solutions', 'references', 'support_url', 'cve_ids', 'apps', 'date_posted']
+        >>> 
     
     """
     
@@ -320,12 +340,13 @@ def insert_data_to_db(thread):
     db for the thread.
 
     ARGS:
-    thread : redhat update thread link for specific month
+        thread : redhat update thread link for specific month
 
-    >>> from vFense.plugins.vuln.redhat.parser import *
-    >>> threads = get_threads()
-    >>> thread =threads[0]
-    >>> insert = insert_data_to_db(thread=thread)
+    Basic Usage:
+        >>> from vFense.plugins.vuln.redhat.parser import *
+        >>> threads = get_threads()
+        >>> thread =threads[0]
+        >>> insert = insert_data_to_db(thread=thread)
     
     """
     cve_updates = []
@@ -353,8 +374,9 @@ def update_all_redhat_data():
     This will call the function to insert the data into db for all the threads 
     and will insert the data one by one.
     
-    >>> from vFense.plugins.vuln.redhat.parser import *
-    >>> update_all_redhat_data()
+    Basic Usage:
+        >>> from vFense.plugins.vuln.redhat.parser import *
+        >>> update_all_redhat_data()
     
     """
     threads=get_threads()

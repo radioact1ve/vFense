@@ -18,5 +18,4 @@ class RedhatSecurityBulletinKey():
 
 class RedhatSecurityBulletinIndexes():
     BulletinId = 'bulletin_id'
-    NameAndVersion = 'name_and_version'
     CveIds = 'cve_ids'
