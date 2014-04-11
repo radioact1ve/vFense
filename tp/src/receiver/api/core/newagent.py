@@ -1,17 +1,16 @@
 import logging
-import sys
-import tornado.httpserver
-import tornado.web
 
 from json import dumps
 
 from vFense.server.handlers import BaseHandler
 
 from vFense.server.hierarchy.decorators import agent_authenticated_request
-from vFense.server.hierarchy.decorators import convert_json_to_arguments
+from vFense.core.decorators import convert_json_to_arguments
 from vFense.core.agent import *
 from vFense.operations import *
+from vFense.operations._constants import ValidOperations
 from vFense.core.agent.agents import add_agent
+from vFense.core.queue.uris import get_result_uris
 from vFense.errorz.error_messages import GenericResults
 from vFense.receiver.rvhandler import RvHandOff
 
@@ -43,17 +42,20 @@ class NewAgentV1(BaseHandler):
                 )
             )
             agent_info = new_agent['data']
-            print agent_info
             self.set_status(new_agent['http_status'])
 
             if new_agent['http_status'] == 200:
                 agent_id = agent_info[AgentKey.AgentId]
+                uris = get_result_uris(agent_id, username, uri, method)
+                uris[OperationKey.Operation] = (
+                    ValidOperations.REFRESH_RESPONSE_URIS
+                )
                 json_msg = {
                     OperationKey.Operation: "new_agent_id",
                     OperationKey.OperationId: "",
                     OperationPerAgentKey.AgentId: agent_id
                 }
-                new_agent['data'] = [json_msg]
+                new_agent['data'] = [json_msg, uris]
                 self.set_header('Content-Type', 'application/json')
                 try:
                     if 'rv' in plugins:

@@ -13,6 +13,7 @@ from vFense.core.permissions.permissions import verify_permission_for_user, \
 
 from vFense.core.permissions.decorators import check_permissions
 from vFense.core.agent import *
+from vFense.core.user._constants import DefaultUser
 from vFense.core.agent.agents import change_customer_for_agents, \
     remove_all_agents_for_customer
 
@@ -285,10 +286,13 @@ class CustomersHandler(BaseHandler):
         active_user = self.get_current_user()
         uri = self.request.uri
         method = self.request.method
-        all_customers = self.get_argument('all_customers', None)
+        all_customers = None
         customer_context = self.get_argument('customer_context', None)
         count = 0
         customer_data = {}
+        if not customer_context and active_user == DefaultUser.ADMIN:
+            all_customers = True
+
         try:
             if customer_context:
                 granted, status_code = (
@@ -364,15 +368,19 @@ class CustomersHandler(BaseHandler):
                     ApiArguments.CPU_THROTTLE, CPUThrottleValues.NORMAL
                 )
             )
-            operation_ttl = (
-                self.arguments.get(ApiArguments.OPERATION_TTL, 10)
+            server_queue_ttl = (
+                self.arguments.get(ApiArguments.SERVER_QUEUE_TTL, 10)
+            )
+            agent_queue_ttl = (
+                self.arguments.get(ApiArguments.AGENT_QUEUE_TTL, 10)
             )
 
             results = (
                 create_customer(
                     customer_name, active_user, pkg_url,
-                    net_throttle, cpu_throttle, operation_ttl,
-                    user_name=active_user, uri=uri, method=method
+                    net_throttle, cpu_throttle, server_queue_ttl,
+                    agent_queue_ttl, user_name=active_user, uri=uri,
+                    method=method
                 )
             )
             self.set_status(results['http_status'])
