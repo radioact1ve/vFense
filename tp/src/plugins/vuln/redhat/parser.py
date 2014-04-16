@@ -193,6 +193,7 @@ def get_rpm_pkgs(dfile):
     
     """
     rpm_pkgs = []
+    ftp_rpms = []
     datafile=dfile
     if os.stat(datafile).st_size > 0:
         fo=open(datafile, 'r+')
@@ -202,14 +203,24 @@ def get_rpm_pkgs(dfile):
             pkg_info = data
             pkgs = pkg_info.split()
             for pkg in pkgs:
-                if '.rpm' in pkg and not 'ftp://' in pkg:
-                    rpm_pkgs.append(pkg)
+                if '.rpm' in pkg:
+                    if 'ftp://' in pkg:
+                        ftp_rpms.append(pkg)
+                    else:
+                        rpm_pkgs.append(pkg)
     
-    packages = list(set(rpm_pkgs))
-    if not packages:
+    rpm_packages = list(set(rpm_pkgs))
+    ftp_packages = list(set(ftp_pkgs))
+    data = 
+        {
+            'rpm_packages': rpm_packages,
+            'ftp_packages': ftp_packages,
+        }
+        
+    if not rpm_packages:
         print datafile
     
-    return(packages)
+    return(data)
 
 def get_rh_cve_ids(dfile):
     """
@@ -294,6 +305,9 @@ def get_rh_data(dfile):
         #bug_fixed=re.search('5\.\s+Bugs fixed:\n\n(\w.*)\n\n.*6\.\s+Package List', data, re.DOTALL).group(1)
         
         pkg_list = get_rpm_pkgs(dfile=dfile)
+        if pkg_list:
+            rpm_packages = pkg_list['rpm_packages']
+            ftp_packages = pkg_list['ftp_packages']
 	
         references = None
         ref = (re.search('References:\n\n(\w.*)\n\n.*\.\s+Contact', data, re.DOTALL))        
@@ -329,6 +343,7 @@ def get_rh_data(dfile):
             "bullentin_summary": summary,
             "bulletin_details": descriptions,
             "apps" : pkg_list,
+            "solution_apps":
             "cve_ids": cve_ids,
             "support_url": reference_url,
             "solutions": solutions,
