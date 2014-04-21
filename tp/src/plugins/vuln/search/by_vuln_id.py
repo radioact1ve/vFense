@@ -2,20 +2,11 @@ import re
 import logging
 import logging.config
 
-<<<<<<< HEAD:tp/src/plugins/vuln/search/by_vuln_id.py
 from vFense.errorz.error_messages import GenericResults
 from vFense.plugins.vuln.cve import *
 from vFense.plugins.vuln.cve._constants import *
 import vFense.plugins.vuln.ubuntu.usn as usn
 import vFense.plugins.vuln.windows.ms as ms
-=======
-from vFense.db.client import db_create_close, r, db_connect
-from vFense.errorz.error_messages import GenericResults, PackageResults
-from vFense.plugins.cve import *
-from vFense.plugins.cve.cve_constants import *
-from vFense.plugins.cve.search._db import get_ubu_vulnerability_data_by_vuln_id, \
-    get_win_vulnerability_data_by_vuln_id, get_redhat_vulnerability_data_by_vuln_id
->>>>>>> f7247095462ffe3a5e2e7d8a26e6d6f1b3ca1487:tp/src/plugins/cve/search/by_vuln_id.py
 
 logging.config.fileConfig('/opt/TopPatch/conf/logging.config')
 logger = logging.getLogger('cve')

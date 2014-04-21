@@ -210,9 +210,8 @@ def get_rpm_pkgs(dfile):
                         rpm_pkgs.append(pkg)
     
     rpm_packages = list(set(rpm_pkgs))
-    ftp_packages = list(set(ftp_pkgs))
-    data = 
-        {
+    ftp_packages = list(set(ftp_rpms))
+    data = {
             'rpm_packages': rpm_packages,
             'ftp_packages': ftp_packages,
         }
@@ -342,8 +341,8 @@ def get_rh_data(dfile):
             "bulletin_id":vulnerability_id,
             "bullentin_summary": summary,
             "bulletin_details": descriptions,
-            "apps" : pkg_list,
-            "solution_apps":
+            "apps" : rpm_packages,
+            "solution_apps": ftp_packages,
             "cve_ids": cve_ids,
             "support_url": reference_url,
             "solutions": solutions,
