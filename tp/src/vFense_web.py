@@ -50,7 +50,6 @@ from vFense.plugins.ra.api.status import RDStatusQueue
 from vFense.plugins.ra.api.rdsession import RDSession
 from vFense.plugins.ra.api.settings import SetPassword
 from vFense.server.hierarchy import db as hierarchy_db
-from vFense.server.api.transactions_api import *
 from vFense.server.api.log_api import *
 from vFense.server.api.email_api import *
 from vFense.server.api.tag_api import *
@@ -62,6 +61,8 @@ from vFense.core.api.user import UserHandler, UsersHandler
 from vFense.core.api.group import GroupHandler, GroupsHandler
 from vFense.core.api.customer import CustomerHandler, CustomersHandler
 from vFense.core.api.permission import RetrieveValidPermissionsHandler
+from vFense.operations.api.agent_operations import GetTransactionsHandler, \
+    AgentOperationsHandler, TagOperationsHandler, OperationHandler
 
 from vFense.scripts.create_indexes import initialize_indexes_and_create_tables
 
@@ -93,12 +94,6 @@ class Application(tornado.web.Application):
             #(r"/ws/?", WebSocketHandler),
             (r"/adminForm", AdminHandler),
 
-            ##### User and Groups API
-            #(r"/api/user/?", GetUserApi),
-            #(r"/api/users/?", GetUsersApi),
-
-            #(r"/api/groups/?", GetGroupApi),
-
             ##### New User API
             (r"/api/v1/user/([a-zA-Z0-9_ ]+)?", UserHandler),
             (r"/api/v1/users?", UsersHandler),
@@ -109,8 +104,6 @@ class Application(tornado.web.Application):
 
             ##### New Customer API
             (r'/api/v1/customer/((?:\w(?!%20+")|%20(?!%20*")){1,36})?', CustomerHandler),
-            #(r'/api/v1/customer/((?:\w(?!\s+")+|\s(?!\s*"))+\w)?', CustomerHandler),
-            #(r"/api/v1/customer/([a-zA-Z0-9_ ]+)?", CustomerHandler),
             (r"/api/v1/customers?", CustomersHandler),
 
             ##### Notification API

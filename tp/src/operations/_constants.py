@@ -1,3 +1,44 @@
+class vFensePlugins():
+    RV_PLUGIN = 'rv'
+    CORE_PLUGIN = 'core'
+    RA_PLUGIN = 'ra'
+    MONITORING_PLUGIN = 'monitoring'
+    VULNERABILITY = 'vulnerability'
+    PATCHING = 'patching'
+    VALID_PLUGINS = (
+        RV_PLUGIN, CORE_PLUGIN, RA_PLUGIN, MONITORING_PLUGIN,
+        VULNERABILITY, PATCHING
+    )
+
+
+class OperationErrors():
+    EXPIRED = 'Operation expired'
+    PICKEDUP = 'Operation was picked up by the agent'
+    PENDINGPICKUP = 'Operation has not been picked up by the agent'
+    COMPLETED = 'Operation was completed successfully'
+    FAILED = 'Operation completed with errors'
+
+
+class AdminActions():
+    CREATE = 'create'
+    UPDATE = 'update'
+    REMOVE = 'remove'
+    VALID_ACTIONS = (CREATE, UPDATE, REMOVE)
+
+
+class vFenseObjects():
+    AGENT = 'agent'
+    TAG = 'tag'
+    SCHEDULE = 'schedule'
+    USER = 'user'
+    GROUP = 'group'
+    CUSTOMER = 'customer'
+    VALID_OBJECTS = (
+        AGENT, TAG, SCHEDULE,
+        USER, GROUP, CUSTOMER
+    )
+
+
 class BaseURIs():
     LISTENER = 'rvl/v1'
     API = 'api/v1'
@@ -22,18 +63,19 @@ class ListenerURIs():
     INSTALL_SUPPORTED_APPS = 'rv/results/install/apps/supported'
     INSTALL_AGENT_APPS = 'rv/results/install/apps/agent'
     UNINSTALL = 'rv/results/uninstall'
+    UNINSTALL_AGENT = 'rv/results/uninstall'
     REBOOT = 'core/results/reboot'
     SHUTDOWN = 'core/results/shutdown'
-    APPS_REFRESH = 'core/results/updatesapplications'
+    REFRESH_APPS = 'rv/updatesapplications'
     START_UP = 'core/results/startup'
     CHECK_IN = 'core/checkin'
     MONITOR_DATA = 'monitoring/monitordata'
     REFRESH_RESPONSE_URIS = 'core/uris/response'
 
 
-class ValidOperations():
+class AgentOperations():
     NEWAGENT = 'new_agent'
-    APPS_REFRESH = 'updatesapplications'
+    REFRESH_APPS = 'updatesapplications'
     CHECK_IN = 'check_in'
     MONITOR_DATA = 'monitor_data'
     START_UP = 'startup'
@@ -49,7 +91,7 @@ class ValidOperations():
     REFRESH_RESPONSE_URIS = 'refresh_response_uris'
 
     OPERATIONS = (
-        NEWAGENT, APPS_REFRESH, CHECK_IN, MONITOR_DATA,
+        NEWAGENT, REFRESH_APPS, CHECK_IN, MONITOR_DATA,
         START_UP, INSTALL_OS_APPS, INSTALL_CUSTOM_APPS,
         INSTALL_SUPPORTED_APPS, INSTALL_AGENT_APPS,
         UNINSTALL, UNINSTALL_AGENT,
