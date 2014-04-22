@@ -17,7 +17,8 @@ define(
         }, exports = {
             Collection: Pager.Collection.extend({
                 baseUrl: 'api/v1/reports/',
-                reportType: 'osdetails',
+                reportType: 'os',
+//                reportType: 'osdetails',
                 url: function () {
                     var url = this.baseUrl + this.reportType,
                         query = this.query();
@@ -38,12 +39,12 @@ define(
                 showLegend: false,
                 showHeader: false,
                 reportTemplates: {
-                    'osdetails': osReport,
-                    'networkdetails': networkReport,
-                    'memorydetails': memoryReport,
-                    'cpudetails': cpuReport,
-                    'diskdetails': hddReport,
-					'hardwaredetails': hardwareReport
+                    'os': osReport,
+                    'network': networkReport,
+                    'memory': memoryReport,
+                    'cpu': cpuReport,
+                    'disk': hddReport,
+					'hardware': hardwareReport
                 },
                 updateList: function (collection) {
                     var $items = this.$('.items'),
@@ -72,6 +73,7 @@ define(
                     $tab.addClass('active').siblings().removeClass('active');
                     this.pager.collection.reportType = $link.attr('href');
                     this.pager.collection.fetch();
+                    return this;
                 },
                 renderContent: function () {
                     this.pager.render();
