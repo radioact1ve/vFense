@@ -13,7 +13,7 @@ from vFense.core.permissions.permissions import verify_permission_for_user, \
 
 from vFense.core.permissions.decorators import check_permissions
 from vFense.core.agent import *
-from vFense.core.user._constants import DefaultUser
+from vFense.core.user._constants import DefaultUsers
 from vFense.core.agent.agents import change_customer_for_agents, \
     remove_all_agents_for_customer
 
@@ -29,6 +29,7 @@ from vFense.core.user.users import add_users_to_customer, \
 
 from vFense.errorz._constants import ApiResultKeys
 from vFense.errorz.error_messages import GenericResults
+from vFense.errorz.results import Results
 from vFense.errorz.status_codes import CustomerFailureCodes, CustomerCodes
 from vFense.plugins.patching.patching import remove_all_apps_for_customer, \
     update_all_apps_for_customer
@@ -300,7 +301,7 @@ class CustomersHandler(BaseHandler):
         customer_context = self.get_argument('customer_context', None)
         count = 0
         customer_data = {}
-        if not customer_context and active_user == DefaultUser.ADMIN:
+        if not customer_context and active_user == DefaultUsers.ADMIN:
             all_customers = True
 
         try:

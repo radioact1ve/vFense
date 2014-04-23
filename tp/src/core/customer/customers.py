@@ -6,13 +6,14 @@ from vFense.core._db import retrieve_object
 from vFense.core.customer import *
 from vFense.core.customer._constants import DefaultCustomers
 from vFense.core.user import *
-from vFense.core.user._constants import DefaultUser
+from vFense.core.user._constants import DefaultUsers
 from vFense.core.customer._db import insert_customer, fetch_customer, \
     insert_user_per_customer, delete_user_in_customers , delete_customer, \
     users_exists_in_customer, update_customer, fetch_users_for_customer, \
     fetch_properties_for_all_customers, fetch_properties_for_customer, \
-    users_exists_in_customers, delete_customers
+    users_exists_in_customers, delete_customers, delete_users_in_customer
 
+from vFense.core.group._db  import delete_groups_from_customer
 from vFense.core.decorators import results_message, time_it
 from vFense.errorz.status_codes import *
 from vFense.errorz._constants import ApiResultKeys
@@ -524,22 +525,22 @@ def create_customer(
                 username, [customer_name], user_name, uri, method
             )
 
-            if username != DefaultUser.ADMIN:
+            if username != DefaultUsers.ADMIN:
                 add_user_to_customers(
-                    DefaultUser.ADMIN, [customer_name], user_name, uri, method
+                    DefaultUsers.ADMIN, [customer_name], user_name, uri, method
                 )
 
         #The admin user should be part of every group
-        elif object_status == DbCodes.Inserted and username != DefaultUser.ADMIN:
+        elif object_status == DbCodes.Inserted and username != DefaultUsers.ADMIN:
             admin_exist = (
                 retrieve_object(
-                    DefaultUser.ADMIN, UserCollections.Users
+                    DefaultUsers.ADMIN, UserCollections.Users
                 )
             )
             
             if admin_exist:
                 add_user_to_customers(
-                    DefaultUser.ADMIN, [customer_name], user_name, uri, method
+                    DefaultUsers.ADMIN, [customer_name], user_name, uri, method
                 )
 
 
@@ -856,10 +857,9 @@ def remove_customer(customer_name, user_name=None, uri=None, method=None):
     customers_deleted = []
     try:
         customer_exist = get_customer(customer_name)
-        users_exist = fetch_users_for_customer(customer_name)
         default_in_list = DefaultCustomers.DEFAULT == customer_name
 
-        if customer_exist and not users_exist and not default_in_list:
+        if customer_exist and not default_in_list:
             status_code, count, errors, generated_ids = (
                 delete_customer(customer_name)
             )
@@ -869,15 +869,21 @@ def remove_customer(customer_name, user_name=None, uri=None, method=None):
                 generic_status_code = GenericCodes.ObjectDeleted
                 vfense_status_code = CustomerCodes.CustomerDeleted
                 customers_deleted.append(customer_name)
+                delete_groups_from_customer(customer_name)
+                users = (
+                    fetch_users_for_customer(
+                        customer_name, CustomerPerUserKeys.UserName
+                    )
+                )
+                if users:
+                    users = (
+                        map(
+                            lambda user:
+                            user[CustomerPerUserKeys.UserName], users
+                        )
+                    )
+                    delete_users_in_customer(users, customer_name)
 
-
-        elif customer_exist and users_exist and not default_in_list:
-            msg = (
-                'users still exist for customer %s' % customer_name
-            )
-            status_code = DbCodes.Unchanged
-            generic_status_code = GenericFailureCodes.FailedToDeleteObject
-            vfense_status_code = CustomerFailureCodes.UsersExistForCustomer
 
         elif default_in_list:
             msg = 'Can not delete the default customer'
@@ -971,6 +977,23 @@ def remove_customers(customer_names, user_name=None, uri=None, method=None):
                 generic_status_code = GenericCodes.ObjectDeleted
                 vfense_status_code = CustomerCodes.CustomerDeleted
                 customers_deleted = customer_names
+                ### Delete all the groups that belong to these customers
+                ### And remove the users from these customers as well.
+                for customer_name in customer_names:
+                    delete_groups_from_customer(customer_name)
+                    users = (
+                        fetch_users_for_customer(
+                            customer_name, CustomerPerUserKeys.UserName
+                        )
+                    )
+                    if users:
+                        users = (
+                            map(
+                                lambda user:
+                                user[CustomerPerUserKeys.UserName], users
+                            )
+                        )
+                        delete_users_in_customer(users, customer_name)
 
 
         elif users_exist[0] and not default_in_list:

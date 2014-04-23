@@ -381,7 +381,7 @@ def remove_users_from_customer(
     }
     """
     status = remove_users_from_customer.func_name + ' - '
-    admin_in_list = DefaultUser.ADMIN in usernames
+    admin_in_list = DefaultUsers.ADMIN in usernames
     try:
         if not admin_in_list:
             status_code, count, errors, generated_ids = (
@@ -407,6 +407,7 @@ def remove_users_from_customer(
 
         else:
             msg = 'can not remove the admin user from any customer'
+            status_code = DbCodes.Skipped
             generic_status_code = GenericCodes.InvalidId
             vfense_status_code = UserFailureCodes.CantDeleteAdminFromCustomer
 
@@ -593,7 +594,7 @@ def remove_users_from_group(
     }
     """
     status = remove_users_from_group.func_name + ' - '
-    admin_in_list = DefaultUser.ADMIN in usernames
+    admin_in_list = DefaultUsers.ADMIN in usernames
     try:
         if not admin_in_list:
             status_code, count, errors, generated_ids = (
@@ -941,7 +942,7 @@ def remove_user(username, user_name=None, uri=None, method=None):
     usernames_not_to_delete = []
     usernames_to_delete = []
     try:
-        if user_exist and username != DefaultUser.ADMIN:
+        if user_exist and username != DefaultUsers.ADMIN:
             remove_groups_from_user(username)
             remove_customers_from_user(username)
             usernames_to_delete.append(username)
@@ -955,7 +956,7 @@ def remove_user(username, user_name=None, uri=None, method=None):
                 vfense_status_code = UserCodes.UserDeleted
                 msg = 'User removed %s' % (username)
 
-        elif username == DefaultUser.ADMIN:
+        elif username == DefaultUsers.ADMIN:
             msg = 'Can not delete the %s user' % (username)
             usernames_not_to_delete.append(username)
             object_status = DbCodes.Skipped
@@ -1034,12 +1035,12 @@ def remove_users(usernames, user_name=None, uri=None, method=None):
         for username in usernames:
             user_exist = get_user(username)
             status = remove_users.func_name + ' - '
-            if user_exist and username != DefaultUser.ADMIN:
+            if user_exist and username != DefaultUsers.ADMIN:
                 remove_groups_from_user(username)
                 remove_customers_from_user(username)
                 usernames_to_delete.append(username)
 
-            elif username == DefaultUser.ADMIN:
+            elif username == DefaultUsers.ADMIN:
                 msg = 'Can not delete the %s user' % (username)
                 usernames_not_to_delete.append(username)
                 generic_status_code = GenericCodes.CouldNotBeDeleted
@@ -1238,6 +1239,19 @@ def change_password(
 
     return(results)
 
+def _validate_user_data(username, **kwargs):
+    data_validated = True
+    if kwargs.get(UserKeys.CurrentCustomer):
+        current_customer = kwargs.get(UserKeys.CurrentCustomer)
+        valid_current_customer = False
+        customer_validated = users_exists_in_customer(username, current_customer)
+        if customer_validated:
+            valid_current_customer = True
+
+        return(valid_current_customer)
+
+    return(data_validated)
+
 
 @time_it
 @results_message
@@ -1250,6 +1264,7 @@ def edit_user_properties(username, **kwargs):
         full_name (str): The full name of the user
         email (str): The email address of the user
         user_name (str): The name of the user who called this function.
+        current_customer (str): The name of the customer you want to manage.
         uri (str): The uri that was used to call this function.
         method (str): The HTTP methos that was used to call this function.
 
@@ -1266,7 +1281,6 @@ def edit_user_properties(username, **kwargs):
             }
         }
     """
-
     if not kwargs.get(ApiResultKeys.USERNAME):
         user_name = None
     else:
@@ -1291,18 +1305,27 @@ def edit_user_properties(username, **kwargs):
     vfense_status_code = 0
     try:
         if user_exist:
-            object_status, object_count, error, generated_ids = (
-                update_user(username, kwargs)
-            )
-            if object_status == DbCodes.Replaced:
-                msg = 'User %s was updated - ' % (username)
-                generic_status_code = GenericCodes.ObjectUpdated
-                vfense_status_code = UserCodes.UserUpdated
+            data_validated = _validate_user_data(username, **kwargs)
+            if data_validated:
+                object_status, object_count, error, generated_ids = (
+                    update_user(username, kwargs)
+                )
 
-            elif object_status == DbCodes.Unchanged:
-                msg = 'User %s was not updated - ' % (username)
-                generic_status_code = GenericCodes.ObjectUnchanged
-                vfense_status_code = UserCodes.UserUnchanged
+                if object_status == DbCodes.Replaced:
+                    msg = 'User %s was updated - ' % (username)
+                    generic_status_code = GenericCodes.ObjectUpdated
+                    vfense_status_code = UserCodes.UserUpdated
+
+                elif object_status == DbCodes.Unchanged:
+                    msg = 'User %s was not updated - ' % (username)
+                    generic_status_code = GenericCodes.ObjectUnchanged
+                    vfense_status_code = UserCodes.UserUnchanged
+
+            else:
+                object_status = DbCodes.Skipped
+                generic_status_code = GenericCodes.InvalidId
+                vfense_status_code = UserFailureCodes.FailedToUpdateUser
+                msg = 'User %s properties were invalid - ' % (username)
 
         else:
             object_status = DbCodes.Skipped
