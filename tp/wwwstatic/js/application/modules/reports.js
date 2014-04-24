@@ -1,9 +1,9 @@
 define(
-    ['jquery', 'underscore', 'backbone', 'modules/lists/pageable', 'text!templates/reports.html',
+    ['jquery', 'underscore', 'backbone', 'crel', 'modules/lists/pageable', 'text!templates/reports.html',
      'text!templates/osReport.html', 'text!templates/networkReport.html',
      'text!templates/memoryReport.html', 'text!templates/cpuReport.html',
 	 'text!templates/hddReport.html', 'text!templates/hardwareReport.html'],
-    function ($, _, Backbone, Pager, myTemplate, osReport, networkReport, memoryReport, cpuReport, hddReport, hardwareReport) {
+    function ($, _, Backbone, crel, Pager, myTemplate, osReport, networkReport, memoryReport, cpuReport, hddReport, hardwareReport) {
         'use strict';
         var helpers = {
             getDriveSize: function (size) {
@@ -55,10 +55,57 @@ define(
             View: Backbone.View.extend({
                 initialize: function () {
                     this.pager = new exports.Pager();
+                    this.prevSearchType = 'computer_name';
+                    return this;
                 },
                 template: myTemplate,
                 events: {
-                    'click li a': 'switchTab'
+                    'change select[name=advancedSearch]'    : 'filterBySearch',
+                    'change select[name=sort]'              : 'sortBy',
+                    'change select[name=order]'             : 'orderBy',
+                    'change select[name=filterKey]'         : 'filterKeyChange',
+                    'change select[name=filterValue]'       : 'filterValueChange',
+                    'keyup input[name=search]'              : 'debouncedSearch',
+                    'click li a'                            : 'switchTab'
+                },
+                debouncedSearch: _.debounce(function (event) {
+                    var searchType = $(event.currentTarget).data('type');
+                    if(this.prevSearchType !== searchType) {
+                        delete this.pager.collection.params[this.prevSearchType];
+                        this.prevSearchType = searchType;
+                    }
+                    this.pager.collection.params[searchType] = $(event.currentTarget).val();
+                    this.pager.collection.fetch();
+                }, 300),
+                filterBySearch: function (event) {
+                    var $header = $('header');
+                    var $search = $header.find('#searchString');
+                    var $selectedElement = $(event.currentTarget).val();
+                    if($selectedElement === 'bit_type')
+                    {
+                        $search.empty();
+                        $search.append(crel('div', {class: 'input-prepend noMargin'}, crel('span', {class: 'add-on'}, crel('i', {class: 'icon-search'})), crel('input', {class: 'input-small width-auto', type: 'text', name: 'search', 'data-type': 'bit_type', placeholder: 'Search By System Arch'})));
+                    }
+                    else if($selectedElement === 'os_string')
+                    {
+                        $search.empty();
+                        $search.append(crel('div', {class: 'input-prepend noMargin'}, crel('span', {class: 'add-on'}, crel('i', {class: 'icon-search'})), crel('input', {class: 'input-small width-auto', type: 'text', name: 'search', 'data-type': 'os_string', placeholder: 'Search By Os String'})));
+                    }
+                    else if($selectedElement === 'os_code')
+                    {
+                        $search.empty();
+                        $search.append(crel('div', {class: 'input-prepend noMargin'}, crel('span', {class: 'add-on'}, crel('i', {class: 'icon-search'})), crel('input', {class: 'input-small width-auto', type: 'text', name: 'search', 'data-type': 'os_code', placeholder: 'Search By OS Code'})));
+                    }
+                    else if($selectedElement === 'machine_type')
+                    {
+                        $search.empty();
+                        $search.append(crel('div', {class: 'input-prepend noMargin'}, crel('span', {class: 'add-on'}, crel('i', {class: 'icon-search'})), crel('input', {class: 'input-small width-auto', type: 'text', name: 'search', 'data-type': 'machine_type', placeholder: 'Search By Machine Type'})));
+                    }
+                    else
+                    {
+                        $search.empty();
+                        $search.append(crel('div', {class: 'input-prepend noMargin'}, crel('span', {class: 'add-on'}, crel('i', {class: 'icon-search'})), crel('input', {class: 'input-small width-auto', type: 'text', name: 'search', 'data-type': 'computer_name', placeholder: 'Search By Computer Name'})));
+                    }
                 },
                 render: function () {
                     var tmpl = _.template(this.template);

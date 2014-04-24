@@ -1743,3 +1743,7 @@ dl.inline dd.cveId {
 input#deleteAllAgents {
     border-radius: 0;
 }
+
+.width-auto {
+    width: auto !important;
+}
