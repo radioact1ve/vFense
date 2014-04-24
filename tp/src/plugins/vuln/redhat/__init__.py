@@ -9,6 +9,7 @@ class RedhatSecurityBulletinKey():
     Summary = 'bulletin_summary'
     Details = 'bulletin_details'
     Apps = 'apps'
+    AppsLink = 'solution_apps'
     OsString = 'os_string'
     CveIds = 'cve_ids'
     SupportUrl = 'support_url'

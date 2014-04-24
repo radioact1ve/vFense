@@ -265,7 +265,7 @@ def initialize_db():
             #begin_usn_home_page_processing(full_parse=True)
             print "Done Updating Ubuntu Security Bulletin Ids..."
             print "Updating Redhat Security Bulletin Ids...( This can take a couple of minutes )"
-            update_all_redhat_data()
+            #update_all_redhat_data()
             print "Done Updating Redhat Security Bulletin Ids..."
 
         conn.close()
