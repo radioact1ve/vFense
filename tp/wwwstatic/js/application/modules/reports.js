@@ -4,17 +4,10 @@ define(
      'text!templates/memoryReport.html', 'text!templates/cpuReport.html',
 	 'text!templates/hddReport.html', 'text!templates/hardwareReport.html'],
     function ($, _, Backbone, crel, Pager, myTemplate, osReport, networkReport, memoryReport, cpuReport, hddReport, hardwareReport) {
+
         'use strict';
-        var helpers = {
-            getDriveSize: function (size) {
-                var result = Math.floor(size / 1000000);
-                if (result) {
-                    return result + ' GB';
-                } else {
-                    return Math.floor(size / 1000) + ' MB';
-                }
-            }
-        }, exports = {
+
+        var exports = {
             Collection: Pager.Collection.extend({
                 baseUrl: 'api/v1/reports/',
                 reportType: 'os',
@@ -36,8 +29,6 @@ define(
                     });
                     return Pager.View.prototype.initialize.call(this, options);
                 },
-                showLegend: false,
-                showHeader: false,
                 reportTemplates: {
                     'os': osReport,
                     'network': networkReport,
@@ -46,11 +37,42 @@ define(
                     'disk': hddReport,
 					'hardware': hardwareReport
                 },
-                updateList: function (collection) {
+                layoutHeader: function ($left, $right) {
+                    var headerTemplate = _.template(this.reportTemplates[this.collection.reportType]);
+                    $left.append(headerTemplate({header: true, legend: false, left: true}));
+                    $right.append(headerTemplate({header: true, legend: false, left: false, query: this.collection.params}));
+                    return this;
+                },
+                layoutLegend: function ($legend) {
+                    var legendTemplate = _.template(this.reportTemplates[this.collection.reportType]);
+                    $legend.append(legendTemplate({header: false, legend: true, query: this.collection.params}));
+                    return this;
+                },
+                renderModel: function (model) {
+                    var template = _.template(this.reportTemplates[this.collection.reportType]),
+                        payload = {
+                            header: false,
+                            legend: false,
+                            params: this.collection.params,
+                            model: model,
+                            viewHelpers: {
+                                getDriveSize: function (size) {
+                                    var result = Math.floor(size / 1000000);
+                                    if (result) {
+                                        return result + ' GB';
+                                    } else {
+                                        return Math.floor(size / 1000) + ' MB';
+                                    }
+                                }
+                            }
+                        };
+                    return template(payload);
+                }
+               /* updateList: function (collection) {
                     var $items = this.$('.items'),
                         template = _.template(this.reportTemplates[this.collection.reportType]);
                     $items.empty().append(template({models: this.collection.models, helpers: helpers}));
-                }
+                }*/
             }),
             View: Backbone.View.extend({
                 initialize: function () {
