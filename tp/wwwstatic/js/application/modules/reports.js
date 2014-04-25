@@ -11,7 +11,6 @@ define(
             Collection: Pager.Collection.extend({
                 baseUrl: 'api/v1/reports/',
                 reportType: 'os',
-//                reportType: 'osdetails',
                 url: function () {
                     var url = this.baseUrl + this.reportType,
                         query = this.query();
@@ -68,11 +67,6 @@ define(
                         };
                     return template(payload);
                 }
-               /* updateList: function (collection) {
-                    var $items = this.$('.items'),
-                        template = _.template(this.reportTemplates[this.collection.reportType]);
-                    $items.empty().append(template({models: this.collection.models, helpers: helpers}));
-                }*/
             }),
             View: Backbone.View.extend({
                 initialize: function () {
@@ -93,10 +87,12 @@ define(
                 debouncedSearch: _.debounce(function (event) {
                     var searchType = $(event.currentTarget).data('type');
                     if(this.prevSearchType !== searchType) {
-                        delete this.pager.collection.params[this.prevSearchType];
+                        delete this.pager.collection.params.key[this.prevSearchType];
+                        delete this.pager.collection.params.query;
                         this.prevSearchType = searchType;
                     }
-                    this.pager.collection.params[searchType] = $(event.currentTarget).val();
+                    this.pager.collection.params.key = this.prevSearchType;
+                    this.pager.collection.params.query = $(event.currentTarget).val();
                     this.pager.collection.fetch();
                 }, 300),
                 filterBySearch: function (event) {
@@ -111,7 +107,7 @@ define(
                     else if($selectedElement === 'os_string')
                     {
                         $search.empty();
-                        $search.append(crel('div', {class: 'input-prepend noMargin'}, crel('span', {class: 'add-on'}, crel('i', {class: 'icon-search'})), crel('input', {class: 'input-small width-auto', type: 'text', name: 'search', 'data-type': 'os_string', placeholder: 'Search By Os String'})));
+                        $search.append(crel('div', {class: 'input-prepend noMargin'}, crel('span', {class: 'add-on'}, crel('i', {class: 'icon-search'})), crel('input', {class: 'input-small width-auto', type: 'text', name: 'search', 'data-type': 'os_string', placeholder: 'Search By OS String'})));
                     }
                     else if($selectedElement === 'os_code')
                     {
@@ -128,6 +124,8 @@ define(
                         $search.empty();
                         $search.append(crel('div', {class: 'input-prepend noMargin'}, crel('span', {class: 'add-on'}, crel('i', {class: 'icon-search'})), crel('input', {class: 'input-small width-auto', type: 'text', name: 'search', 'data-type': 'computer_name', placeholder: 'Search By Computer Name'})));
                     }
+                    this.pager.collection.fetch();
+                    return this;
                 },
                 render: function () {
                     var tmpl = _.template(this.template);
@@ -141,7 +139,9 @@ define(
                         $tab = $link.parent();
                     $tab.addClass('active').siblings().removeClass('active');
                     this.pager.collection.reportType = $link.attr('href');
-                    this.pager.collection.fetch();
+                    delete this.pager.collection.params.key;
+                    delete this.pager.collection.params.query;
+                    this.renderContent();
                     return this;
                 },
                 renderContent: function () {

@@ -52,15 +52,13 @@
         </div>
     <% } %>
 <% } else if (legend) { %>
-    <div class="legend row-fluid">
-        <strong class="span3">Computer Name</strong>
-        <span class="span2">Machine Type</span>
-        <span class="span4">OS Name</span>
-        <span class="span1">OS Type</span>
-        <span class="span2 alignRight">System Arch</span>
-    </div>
+    <strong class="span3">Computer Name</strong>
+    <span class="span2">Machine Type</span>
+    <span class="span4">OS Name</span>
+    <span class="span1">OS Type</span>
+    <span class="span2 alignRight">System Arch</span>
 <% } else { %>
-    <div class="item linked clearfix">
+    <div class="item row-fluid">
         <span class="span3"><%= model.get('computer_name') %></span>
         <span class="span2"><%= model.get('machine_type') %></span>
         <span class="span4"><%= model.get('os_code') %></span>
